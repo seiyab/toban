@@ -12,3 +12,14 @@ let result = require('esbuild').buildSync({
   outdir: 'out',
 })
 
+let fs = require('fs');
+fs.readFile('src/index.html', 'utf8', (error, data) => {
+  if (error) {
+    console.error(error);
+  }
+  fs.writeFile('out/index.html', data, 'utf8', (error) => {
+    if (error) {
+      console.error(error);
+    }
+  })
+})
