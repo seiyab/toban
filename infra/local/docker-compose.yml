@@ -1,0 +1,12 @@
+services:
+  db:
+    image: mysql:8.0.24
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Jeannine921{telecommunications
+      MYSQL_DATABASE: app
+    ports:
+      - 3306:3306
+    volumes:
+      - ./volume:/var/lib/mysql
