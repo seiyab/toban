@@ -1,5 +1,5 @@
 -- Your SQL goes here
-CREATE TABLE users (
+CREATE TABLE members (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(50) NOT NULL
 );
