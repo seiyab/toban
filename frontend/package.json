@@ -15,7 +15,9 @@
     "@tsconfig/recommended": "^1.0.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.0.1",
+    "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "esbuild": "^0.11.18",
@@ -28,10 +30,10 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@types/react": "^17.0.5",
     "proposal-temporal": "^0.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-jss": "^10.6.0"
+    "react-jss": "^10.6.0",
+    "react-router-dom": "^5.2.0"
   }
 }

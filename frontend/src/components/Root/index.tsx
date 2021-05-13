@@ -1,26 +1,31 @@
 import { Temporal } from "proposal-temporal";
 import * as React from "react";
-import { createUseStyles } from "react-jss";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { Calendar } from "@/components/Calendar";
+import { GlobalStyle } from "@/components/GlobalStyle";
 import { MonthSelector } from "@/components/MonthSelector";
 import { useMonthSelector } from "@/components/MonthSelector/hooks";
 
-const useStyles = createUseStyles({
-  root: {
-    fontFamily: "'Noto Sans JP', sans-serif",
-  },
-});
-
 export const Root: React.FC = () => {
-  const classes = useStyles();
   const monthSelectorProps = useMonthSelector(
     Temporal.now.plainDateISO().toPlainYearMonth()
   );
   return (
-    <main className={classes.root}>
-      <MonthSelector {...monthSelectorProps} />
-      <Calendar month={monthSelectorProps.month} />
+    <main>
+      <GlobalStyle>
+        <Router>
+          <Switch>
+            <Route path="/roles/:roleID/calendar">
+              <MonthSelector {...monthSelectorProps} />
+              <Calendar month={monthSelectorProps.month} />
+            </Route>
+            <Route path="/">
+              <div>welcome.</div>
+            </Route>
+          </Switch>
+        </Router>
+      </GlobalStyle>
     </main>
   );
 };
