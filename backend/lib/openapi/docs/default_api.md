@@ -1,45 +1,25 @@
 # default_api
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost:8080/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-**getVersionDetailsv2**](default_api.md#getVersionDetailsv2) | **GET** /v2 | Show API version details
-**listVersionsv2**](default_api.md#listVersionsv2) | **GET** / | List API versions
+**get_members_member_id**](default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
 
 
-# **getVersionDetailsv2**
-> getVersionDetailsv2()
-Show API version details
+# **get_members_member_id**
+> models::Member get_members_member_id(member_id)
+get a member
 
 ### Required Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+  **member_id** | **i32**|  | 
 
 ### Return type
 
- (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **listVersionsv2**
-> listVersionsv2()
-List API versions
-
-### Required Parameters
-This endpoint does not need any parameter.
-
-### Return type
-
- (empty response body)
+[**models::Member**](Member.md)
 
 ### Authorization
 

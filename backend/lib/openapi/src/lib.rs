@@ -9,27 +9,19 @@ use serde::{Serialize, Deserialize};
 
 type ServiceError = Box<dyn Error + Send + Sync + 'static>;
 
-pub const BASE_PATH: &'static str = "";
-pub const API_VERSION: &'static str = "2.0.0";
+pub const BASE_PATH: &'static str = "/api";
+pub const API_VERSION: &'static str = "0.0.1";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
-pub enum GetVersionDetailsv2Response {
-    /// 200 response
+pub enum GetMembersMemberIdResponse {
+    /// 200 response 
     Status200
+    (models::Member)
     ,
-    /// 203 response
-    Status203
-}
-
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-#[must_use]
-pub enum ListVersionsv2Response {
-    /// 200 response
-    Status200
-    ,
-    /// 300 response
-    Status300
+    /// 404 response 
+    Status404
+    (models::Error)
 }
 
 /// API
@@ -39,15 +31,11 @@ pub trait Api<C: Send + Sync> {
         Poll::Ready(Ok(()))
     }
 
-    /// Show API version details
-    async fn get_version_detailsv2(
+    /// get a member
+    async fn get_members_member_id(
         &self,
-        context: &C) -> Result<GetVersionDetailsv2Response, ApiError>;
-
-    /// List API versions
-    async fn list_versionsv2(
-        &self,
-        context: &C) -> Result<ListVersionsv2Response, ApiError>;
+        member_id: i32,
+        context: &C) -> Result<GetMembersMemberIdResponse, ApiError>;
 
 }
 
@@ -59,15 +47,11 @@ pub trait ApiNoContext<C: Send + Sync> {
 
     fn context(&self) -> &C;
 
-    /// Show API version details
-    async fn get_version_detailsv2(
+    /// get a member
+    async fn get_members_member_id(
         &self,
-        ) -> Result<GetVersionDetailsv2Response, ApiError>;
-
-    /// List API versions
-    async fn list_versionsv2(
-        &self,
-        ) -> Result<ListVersionsv2Response, ApiError>;
+        member_id: i32,
+        ) -> Result<GetMembersMemberIdResponse, ApiError>;
 
 }
 
@@ -94,22 +78,14 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
         ContextWrapper::context(self)
     }
 
-    /// Show API version details
-    async fn get_version_detailsv2(
+    /// get a member
+    async fn get_members_member_id(
         &self,
-        ) -> Result<GetVersionDetailsv2Response, ApiError>
+        member_id: i32,
+        ) -> Result<GetMembersMemberIdResponse, ApiError>
     {
         let context = self.context().clone();
-        self.api().get_version_detailsv2(&context).await
-    }
-
-    /// List API versions
-    async fn list_versionsv2(
-        &self,
-        ) -> Result<ListVersionsv2Response, ApiError>
-    {
-        let context = self.context().clone();
-        self.api().list_versionsv2(&context).await
+        self.api().get_members_member_id(member_id, &context).await
     }
 
 }

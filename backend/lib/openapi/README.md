@@ -13,8 +13,8 @@ To see how to make this your own, look here:
 
 [README]((https://openapi-generator.tech))
 
-- API version: 2.0.0
-- Build date: 2021-05-16T09:14:02.853974Z[Etc/UTC]
+- API version: 0.0.1
+- Build date: 2021-05-16T13:41:11.581313Z[Etc/UTC]
 
 
 
@@ -61,8 +61,7 @@ cargo run --example server
 To run a client, follow one of the following simple steps:
 
 ```
-cargo run --example client GetVersionDetailsv2
-cargo run --example client ListVersionsv2
+cargo run --example client GetMembersMemberId
 ```
 
 ### HTTPS
@@ -92,16 +91,17 @@ See https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *http://localhost*
+All URIs are relative to *http://localhost:8080/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getVersionDetailsv2**](docs/default_api.md#getVersionDetailsv2) | **GET** /v2 | Show API version details
-[**listVersionsv2**](docs/default_api.md#listVersionsv2) | **GET** / | List API versions
+[**get_members_member_id**](docs/default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
 
 
 ## Documentation For Models
 
+ - [Error](docs/Error.md)
+ - [Member](docs/Member.md)
 
 
 ## Documentation For Authorization

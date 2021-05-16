@@ -96,8 +96,7 @@ impl<C> Server<C> {
 
 use openapi_client::{
     Api,
-    GetVersionDetailsv2Response,
-    ListVersionsv2Response,
+    GetMembersMemberIdResponse,
 };
 use openapi_client::server::MakeService;
 use std::error::Error;
@@ -106,23 +105,14 @@ use swagger::ApiError;
 #[async_trait]
 impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
 {
-    /// Show API version details
-    async fn get_version_detailsv2(
+    /// get a member
+    async fn get_members_member_id(
         &self,
-        context: &C) -> Result<GetVersionDetailsv2Response, ApiError>
+        member_id: i32,
+        context: &C) -> Result<GetMembersMemberIdResponse, ApiError>
     {
         let context = context.clone();
-        info!("get_version_detailsv2() - X-Span-ID: {:?}", context.get().0.clone());
-        Err("Generic failuare".into())
-    }
-
-    /// List API versions
-    async fn list_versionsv2(
-        &self,
-        context: &C) -> Result<ListVersionsv2Response, ApiError>
-    {
-        let context = context.clone();
-        info!("list_versionsv2() - X-Span-ID: {:?}", context.get().0.clone());
+        info!("get_members_member_id({}) - X-Span-ID: {:?}", member_id, context.get().0.clone());
         Err("Generic failuare".into())
     }
 

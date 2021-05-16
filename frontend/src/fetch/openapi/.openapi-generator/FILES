@@ -1,4 +1,7 @@
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
+models/Member.ts
+models/ModelError.ts
+models/index.ts
 runtime.ts
