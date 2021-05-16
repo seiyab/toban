@@ -21,3 +21,6 @@ features = ["mysql"]
 version = "0.4.7"
 default-features = false
 features = ["diesel_mysql_pool", "json", "serve"]
+
+[dependencies.openapi_client]
+path = "./lib/openapi"

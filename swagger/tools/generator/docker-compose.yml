@@ -1,0 +1,27 @@
+services:
+  typescript:
+    image: openapitools/openapi-generator-cli:v5.1.1
+    command:
+      - generate
+      - -i
+      - /local/in/openapi.yaml
+      - -g
+      - typescript-fetch
+      - -o
+      - /local/out/
+    volumes:
+      - ${PROJECT_ROOT}/swagger/spec:/local/in:ro
+      - ${PROJECT_ROOT}/frontend/src/fetch/openapi:/local/out:rw
+  rust:
+    image: openapitools/openapi-generator-cli:v5.1.1
+    command:
+      - generate
+      - -i
+      - /local/in/openapi.yaml
+      - -g
+      - rust-server
+      - -o
+      - /local/out/
+    volumes:
+      - ${PROJECT_ROOT}/swagger/spec:/local/in:ro
+      - ${PROJECT_ROOT}/backend/lib/openapi:/local/out:rw
