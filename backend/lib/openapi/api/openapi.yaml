@@ -6,6 +6,20 @@ servers:
 - description: dev
   url: http://localhost:8080/api
 paths:
+  /members:
+    get:
+      operationId: get_members
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Member'
+                type: array
+          description: |
+            200 response
+      summary: get members
   /members/{member_id}:
     get:
       operationId: get_members_member_id

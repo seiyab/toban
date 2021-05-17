@@ -13,6 +13,13 @@ pub const BASE_PATH: &'static str = "/api";
 pub const API_VERSION: &'static str = "0.0.1";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum GetMembersResponse {
+    /// 200 response 
+    Status200
+    (Vec<models::Member>)
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 pub enum GetMembersMemberIdResponse {
     /// 200 response 
@@ -31,6 +38,11 @@ pub trait Api<C: Send + Sync> {
         Poll::Ready(Ok(()))
     }
 
+    /// get members
+    async fn get_members(
+        &self,
+        context: &C) -> Result<GetMembersResponse, ApiError>;
+
     /// get a member
     async fn get_members_member_id(
         &self,
@@ -46,6 +58,11 @@ pub trait ApiNoContext<C: Send + Sync> {
     fn poll_ready(&self, _cx: &mut Context) -> Poll<Result<(), Box<dyn Error + Send + Sync + 'static>>>;
 
     fn context(&self) -> &C;
+
+    /// get members
+    async fn get_members(
+        &self,
+        ) -> Result<GetMembersResponse, ApiError>;
 
     /// get a member
     async fn get_members_member_id(
@@ -76,6 +93,15 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
 
     fn context(&self) -> &C {
         ContextWrapper::context(self)
+    }
+
+    /// get members
+    async fn get_members(
+        &self,
+        ) -> Result<GetMembersResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().get_members(&context).await
     }
 
     /// get a member

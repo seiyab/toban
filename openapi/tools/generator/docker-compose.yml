@@ -9,6 +9,8 @@ services:
       - typescript-fetch
       - -o
       - /local/out/
+      - -c
+      - /local/in/typescript-config.json
     volumes:
       - ${PROJECT_ROOT}/openapi/spec:/local/in:ro
       - ${PROJECT_ROOT}/frontend/src/fetch/openapi:/local/out:rw

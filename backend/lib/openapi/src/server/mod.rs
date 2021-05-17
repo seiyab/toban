@@ -22,6 +22,7 @@ pub use crate::context;
 type ServiceFuture = BoxFuture<'static, Result<Response<Body>, crate::ServiceError>>;
 
 use crate::{Api,
+     GetMembersResponse,
      GetMembersMemberIdResponse
 };
 
@@ -30,11 +31,13 @@ mod paths {
 
     lazy_static! {
         pub static ref GLOBAL_REGEX_SET: regex::RegexSet = regex::RegexSet::new(vec![
+            r"^/api/members$",
             r"^/api/members/(?P<member_id>[^/?#]*)$"
         ])
         .expect("Unable to create global regex set");
     }
-    pub(crate) static ID_MEMBERS_MEMBER_ID: usize = 0;
+    pub(crate) static ID_MEMBERS: usize = 0;
+    pub(crate) static ID_MEMBERS_MEMBER_ID: usize = 1;
     lazy_static! {
         pub static ref REGEX_MEMBERS_MEMBER_ID: regex::Regex =
             regex::Regex::new(r"^/api/members/(?P<member_id>[^/?#]*)$")
@@ -144,6 +147,42 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
 
         match &method {
 
+            // GetMembers - GET /members
+            &hyper::Method::GET if path.matched(paths::ID_MEMBERS) => {
+                                let result = api_impl.get_members(
+                                        &context
+                                    ).await;
+                                let mut response = Response::new(Body::empty());
+                                response.headers_mut().insert(
+                                            HeaderName::from_static("x-span-id"),
+                                            HeaderValue::from_str((&context as &dyn Has<XSpanIdString>).get().0.clone().to_string().as_str())
+                                                .expect("Unable to create X-Span-ID header value"));
+
+                                        match result {
+                                            Ok(rsp) => match rsp {
+                                                GetMembersResponse::Status200
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(200).expect("Unable to turn 200 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_MEMBERS_STATUS200"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                *response.body_mut() = Body::from("An internal error occurred");
+                                            },
+                                        }
+
+                                        Ok(response)
+            },
+
             // GetMembersMemberId - GET /members/{member_id}
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS_MEMBER_ID) => {
                 // Path parameters
@@ -215,6 +254,7 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                                         Ok(response)
             },
 
+            _ if path.matched(paths::ID_MEMBERS) => method_not_allowed(),
             _ if path.matched(paths::ID_MEMBERS_MEMBER_ID) => method_not_allowed(),
             _ => Ok(Response::builder().status(StatusCode::NOT_FOUND)
                     .body(Body::empty())
@@ -229,6 +269,8 @@ impl<T> RequestParser<T> for ApiRequestParser {
     fn parse_operation_id(request: &Request<T>) -> Result<&'static str, ()> {
         let path = paths::GLOBAL_REGEX_SET.matches(request.uri().path());
         match request.method() {
+            // GetMembers - GET /members
+            &hyper::Method::GET if path.matched(paths::ID_MEMBERS) => Ok("GetMembers"),
             // GetMembersMemberId - GET /members/{member_id}
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS_MEMBER_ID) => Ok("GetMembersMemberId"),
             _ => Err(()),

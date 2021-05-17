@@ -96,6 +96,7 @@ impl<C> Server<C> {
 
 use openapi_client::{
     Api,
+    GetMembersResponse,
     GetMembersMemberIdResponse,
 };
 use openapi_client::server::MakeService;
@@ -105,6 +106,16 @@ use swagger::ApiError;
 #[async_trait]
 impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
 {
+    /// get members
+    async fn get_members(
+        &self,
+        context: &C) -> Result<GetMembersResponse, ApiError>
+    {
+        let context = context.clone();
+        info!("get_members() - X-Span-ID: {:?}", context.get().0.clone());
+        Err("Generic failuare".into())
+    }
+
     /// get a member
     async fn get_members_member_id(
         &self,

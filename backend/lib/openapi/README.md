@@ -14,7 +14,7 @@ To see how to make this your own, look here:
 [README]((https://openapi-generator.tech))
 
 - API version: 0.0.1
-- Build date: 2021-05-16T13:41:11.581313Z[Etc/UTC]
+- Build date: 2021-05-17T13:21:51.164865Z[Etc/UTC]
 
 
 
@@ -61,6 +61,7 @@ cargo run --example server
 To run a client, follow one of the following simple steps:
 
 ```
+cargo run --example client GetMembers
 cargo run --example client GetMembersMemberId
 ```
 
@@ -95,6 +96,7 @@ All URIs are relative to *http://localhost:8080/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**get_members**](docs/default_api.md#get_members) | **GET** /members | get members
 [**get_members_member_id**](docs/default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
 
 

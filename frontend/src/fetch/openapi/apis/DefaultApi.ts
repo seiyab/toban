@@ -30,6 +30,32 @@ export interface GetMembersMemberIdRequest {
 export class DefaultApi extends runtime.BaseAPI {
 
     /**
+     * get members
+     */
+    async getMembersRaw(): Promise<runtime.ApiResponse<Array<Member>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/members`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(MemberFromJSON));
+    }
+
+    /**
+     * get members
+     */
+    async getMembers(): Promise<Array<Member>> {
+        const response = await this.getMembersRaw();
+        return await response.value();
+    }
+
+    /**
      * get a member
      */
     async getMembersMemberIdRaw(requestParameters: GetMembersMemberIdRequest): Promise<runtime.ApiResponse<Member>> {

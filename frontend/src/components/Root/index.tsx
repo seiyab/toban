@@ -1,30 +1,29 @@
-import { Temporal } from "proposal-temporal";
 import * as React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { Calendar } from "@/components/Calendar";
 import { GlobalStyle } from "@/components/GlobalStyle";
-import { MonthSelector } from "@/components/MonthSelector";
-import { useMonthSelector } from "@/components/MonthSelector/hooks";
+import { RoleCalendarPage } from "@/pages/RoleCalendarPage";
+import { AssignTablePage } from "@/pages/AssignTablePage";
+
+const queryClient = new QueryClient();
 
 export const Root: React.FC = () => {
-  const monthSelectorProps = useMonthSelector(
-    Temporal.now.plainDateISO().toPlainYearMonth()
-  );
   return (
     <main>
       <GlobalStyle>
-        <Router>
-          <Switch>
-            <Route path="/roles/:roleID/calendar">
-              <MonthSelector {...monthSelectorProps} />
-              <Calendar month={monthSelectorProps.month} />
-            </Route>
-            <Route path="/">
-              <div>welcome.</div>
-            </Route>
-          </Switch>
-        </Router>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <Switch>
+              <Route path="/roles/:roleID/calendar">
+                <RoleCalendarPage />
+              </Route>
+              <Route path="/">
+                <AssignTablePage />
+              </Route>
+            </Switch>
+          </Router>
+        </QueryClientProvider>
       </GlobalStyle>
     </main>
   );

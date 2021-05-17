@@ -5,6 +5,7 @@
 use futures::{future, Stream, stream};
 #[allow(unused_imports)]
 use openapi_client::{Api, ApiNoContext, Client, ContextWrapperExt, models,
+                      GetMembersResponse,
                       GetMembersMemberIdResponse,
                      };
 use clap::{App, Arg};
@@ -27,6 +28,7 @@ fn main() {
         .arg(Arg::with_name("operation")
             .help("Sets the operation to run")
             .possible_values(&[
+                "GetMembers",
                 "GetMembersMemberId",
             ])
             .required(true)
@@ -71,6 +73,11 @@ fn main() {
     let mut rt = tokio::runtime::Runtime::new().unwrap();
 
     match matches.value_of("operation") {
+        Some("GetMembers") => {
+            let result = rt.block_on(client.get_members(
+            ));
+            info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());
+        },
         Some("GetMembersMemberId") => {
             let result = rt.block_on(client.get_members_member_id(
                   56
