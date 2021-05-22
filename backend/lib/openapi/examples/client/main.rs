@@ -7,6 +7,8 @@ use futures::{future, Stream, stream};
 use openapi_client::{Api, ApiNoContext, Client, ContextWrapperExt, models,
                       GetMembersResponse,
                       GetMembersMemberIdResponse,
+                      GetRolesResponse,
+                      GetRolesRoleIdResponse,
                      };
 use clap::{App, Arg};
 
@@ -30,6 +32,8 @@ fn main() {
             .possible_values(&[
                 "GetMembers",
                 "GetMembersMemberId",
+                "GetRoles",
+                "GetRolesRoleId",
             ])
             .required(true)
             .index(1))
@@ -80,6 +84,17 @@ fn main() {
         },
         Some("GetMembersMemberId") => {
             let result = rt.block_on(client.get_members_member_id(
+                  56
+            ));
+            info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());
+        },
+        Some("GetRoles") => {
+            let result = rt.block_on(client.get_roles(
+            ));
+            info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());
+        },
+        Some("GetRolesRoleId") => {
+            let result = rt.block_on(client.get_roles_role_id(
                   56
             ));
             info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());

@@ -10,21 +10,19 @@ const queryClient = new QueryClient();
 
 export const Root: React.FC = () => {
   return (
-    <main>
-      <GlobalStyle>
-        <QueryClientProvider client={queryClient}>
-          <Router>
-            <Switch>
-              <Route path="/roles/:roleID/calendar">
-                <RoleCalendarPage />
-              </Route>
-              <Route path="/">
-                <AssignTablePage />
-              </Route>
-            </Switch>
-          </Router>
-        </QueryClientProvider>
-      </GlobalStyle>
-    </main>
+    <GlobalStyle>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <Switch>
+            <Route path="/roles/:roleID/calendar">
+              <RoleCalendarPage />
+            </Route>
+            <Route path="/">
+              <AssignTablePage />
+            </Route>
+          </Switch>
+        </Router>
+      </QueryClientProvider>
+    </GlobalStyle>
   );
 };

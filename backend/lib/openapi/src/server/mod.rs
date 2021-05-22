@@ -23,7 +23,9 @@ type ServiceFuture = BoxFuture<'static, Result<Response<Body>, crate::ServiceErr
 
 use crate::{Api,
      GetMembersResponse,
-     GetMembersMemberIdResponse
+     GetMembersMemberIdResponse,
+     GetRolesResponse,
+     GetRolesRoleIdResponse
 };
 
 mod paths {
@@ -32,7 +34,9 @@ mod paths {
     lazy_static! {
         pub static ref GLOBAL_REGEX_SET: regex::RegexSet = regex::RegexSet::new(vec![
             r"^/api/members$",
-            r"^/api/members/(?P<member_id>[^/?#]*)$"
+            r"^/api/members/(?P<member_id>[^/?#]*)$",
+            r"^/api/roles$",
+            r"^/api/roles/(?P<role_id>[^/?#]*)$"
         ])
         .expect("Unable to create global regex set");
     }
@@ -42,6 +46,13 @@ mod paths {
         pub static ref REGEX_MEMBERS_MEMBER_ID: regex::Regex =
             regex::Regex::new(r"^/api/members/(?P<member_id>[^/?#]*)$")
                 .expect("Unable to create regex for MEMBERS_MEMBER_ID");
+    }
+    pub(crate) static ID_ROLES: usize = 2;
+    pub(crate) static ID_ROLES_ROLE_ID: usize = 3;
+    lazy_static! {
+        pub static ref REGEX_ROLES_ROLE_ID: regex::Regex =
+            regex::Regex::new(r"^/api/roles/(?P<role_id>[^/?#]*)$")
+                .expect("Unable to create regex for ROLES_ROLE_ID");
     }
 }
 
@@ -231,14 +242,143 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                                                     let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
                                                     *response.body_mut() = Body::from(body);
                                                 },
-                                                GetMembersMemberIdResponse::Status404
+                                                GetMembersMemberIdResponse::InternalServerError
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(500).expect("Unable to turn 500 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_MEMBERS_MEMBER_ID_INTERNAL_SERVER_ERROR"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                *response.body_mut() = Body::from("An internal error occurred");
+                                            },
+                                        }
+
+                                        Ok(response)
+            },
+
+            // GetRoles - GET /roles
+            &hyper::Method::GET if path.matched(paths::ID_ROLES) => {
+                                let result = api_impl.get_roles(
+                                        &context
+                                    ).await;
+                                let mut response = Response::new(Body::empty());
+                                response.headers_mut().insert(
+                                            HeaderName::from_static("x-span-id"),
+                                            HeaderValue::from_str((&context as &dyn Has<XSpanIdString>).get().0.clone().to_string().as_str())
+                                                .expect("Unable to create X-Span-ID header value"));
+
+                                        match result {
+                                            Ok(rsp) => match rsp {
+                                                GetRolesResponse::SuccessfulResponse
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(200).expect("Unable to turn 200 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_ROLES_SUCCESSFUL_RESPONSE"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                                GetRolesResponse::InternalServerError
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(500).expect("Unable to turn 500 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_ROLES_INTERNAL_SERVER_ERROR"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                *response.body_mut() = Body::from("An internal error occurred");
+                                            },
+                                        }
+
+                                        Ok(response)
+            },
+
+            // GetRolesRoleId - GET /roles/{role_id}
+            &hyper::Method::GET if path.matched(paths::ID_ROLES_ROLE_ID) => {
+                // Path parameters
+                let path: &str = &uri.path().to_string();
+                let path_params =
+                    paths::REGEX_ROLES_ROLE_ID
+                    .captures(&path)
+                    .unwrap_or_else(||
+                        panic!("Path {} matched RE ROLES_ROLE_ID in set but failed match against \"{}\"", path, paths::REGEX_ROLES_ROLE_ID.as_str())
+                    );
+
+                let param_role_id = match percent_encoding::percent_decode(path_params["role_id"].as_bytes()).decode_utf8() {
+                    Ok(param_role_id) => match param_role_id.parse::<i32>() {
+                        Ok(param_role_id) => param_role_id,
+                        Err(e) => return Ok(Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from(format!("Couldn't parse path parameter role_id: {}", e)))
+                                        .expect("Unable to create Bad Request response for invalid path parameter")),
+                    },
+                    Err(_) => return Ok(Response::builder()
+                                        .status(StatusCode::BAD_REQUEST)
+                                        .body(Body::from(format!("Couldn't percent-decode path parameter as UTF-8: {}", &path_params["role_id"])))
+                                        .expect("Unable to create Bad Request response for invalid percent decode"))
+                };
+
+                                let result = api_impl.get_roles_role_id(
+                                            param_role_id,
+                                        &context
+                                    ).await;
+                                let mut response = Response::new(Body::empty());
+                                response.headers_mut().insert(
+                                            HeaderName::from_static("x-span-id"),
+                                            HeaderValue::from_str((&context as &dyn Has<XSpanIdString>).get().0.clone().to_string().as_str())
+                                                .expect("Unable to create X-Span-ID header value"));
+
+                                        match result {
+                                            Ok(rsp) => match rsp {
+                                                GetRolesRoleIdResponse::SuccessfulResponse
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(200).expect("Unable to turn 200 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_ROLES_ROLE_ID_SUCCESSFUL_RESPONSE"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                                GetRolesRoleIdResponse::NotFound
                                                     (body)
                                                 => {
                                                     *response.status_mut() = StatusCode::from_u16(404).expect("Unable to turn 404 into a StatusCode");
                                                     response.headers_mut().insert(
                                                         CONTENT_TYPE,
                                                         HeaderValue::from_str("application/json")
-                                                            .expect("Unable to create Content-Type header for GET_MEMBERS_MEMBER_ID_STATUS404"));
+                                                            .expect("Unable to create Content-Type header for GET_ROLES_ROLE_ID_NOT_FOUND"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                                GetRolesRoleIdResponse::InternalServerError
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(500).expect("Unable to turn 500 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_ROLES_ROLE_ID_INTERNAL_SERVER_ERROR"));
                                                     let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
                                                     *response.body_mut() = Body::from(body);
                                                 },
@@ -256,6 +396,8 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
 
             _ if path.matched(paths::ID_MEMBERS) => method_not_allowed(),
             _ if path.matched(paths::ID_MEMBERS_MEMBER_ID) => method_not_allowed(),
+            _ if path.matched(paths::ID_ROLES) => method_not_allowed(),
+            _ if path.matched(paths::ID_ROLES_ROLE_ID) => method_not_allowed(),
             _ => Ok(Response::builder().status(StatusCode::NOT_FOUND)
                     .body(Body::empty())
                     .expect("Unable to create Not Found response"))
@@ -273,6 +415,10 @@ impl<T> RequestParser<T> for ApiRequestParser {
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS) => Ok("GetMembers"),
             // GetMembersMemberId - GET /members/{member_id}
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS_MEMBER_ID) => Ok("GetMembersMemberId"),
+            // GetRoles - GET /roles
+            &hyper::Method::GET if path.matched(paths::ID_ROLES) => Ok("GetRoles"),
+            // GetRolesRoleId - GET /roles/{role_id}
+            &hyper::Method::GET if path.matched(paths::ID_ROLES_ROLE_ID) => Ok("GetRolesRoleId"),
             _ => Err(()),
         }
     }

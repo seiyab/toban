@@ -1,0 +1,6 @@
+-- Your SQL goes here
+CREATE TABLE roles (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  emoji VARCHAR(50)
+);

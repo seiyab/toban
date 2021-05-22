@@ -10,9 +10,9 @@ export const RoleCalendarPage: React.VoidFunctionComponent = () => {
     Temporal.now.plainDateISO().toPlainYearMonth()
   );
   return (
-    <>
+    <main>
       <MonthSelector {...monthSelectorProps} />
       <Calendar month={monthSelectorProps.month} />
-    </>
+    </main>
   );
 };

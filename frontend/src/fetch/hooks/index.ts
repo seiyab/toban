@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from "react-query";
-import { Member } from "@/fetch/openapi";
+import { Member, Role } from "@/fetch/openapi";
 import { client } from "../client";
 
 export function useMember(memberID: number): UseQueryResult<Member> {
@@ -14,4 +14,9 @@ export function useMember(memberID: number): UseQueryResult<Member> {
 export function useMembers(): UseQueryResult<Member[]> {
   const keys = ["useMembers"];
   return useQuery(keys, () => client.getMembers());
+}
+
+export function useRoles(): UseQueryResult<Role[]> {
+  const keys = ["useRoles"];
+  return useQuery(keys, () => client.getRoles());
 }

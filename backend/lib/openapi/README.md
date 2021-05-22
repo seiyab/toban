@@ -14,7 +14,7 @@ To see how to make this your own, look here:
 [README]((https://openapi-generator.tech))
 
 - API version: 0.0.1
-- Build date: 2021-05-17T13:21:51.164865Z[Etc/UTC]
+- Build date: 2021-05-20T14:50:18.321680Z[Etc/UTC]
 
 
 
@@ -63,6 +63,8 @@ To run a client, follow one of the following simple steps:
 ```
 cargo run --example client GetMembers
 cargo run --example client GetMembersMemberId
+cargo run --example client GetRoles
+cargo run --example client GetRolesRoleId
 ```
 
 ### HTTPS
@@ -98,12 +100,15 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**get_members**](docs/default_api.md#get_members) | **GET** /members | get members
 [**get_members_member_id**](docs/default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
+[**get_roles**](docs/default_api.md#get_roles) | **GET** /roles | get roles
+[**get_roles_role_id**](docs/default_api.md#get_roles_role_id) | **GET** /roles/{role_id} | get a role
 
 
 ## Documentation For Models
 
  - [Error](docs/Error.md)
  - [Member](docs/Member.md)
+ - [Role](docs/Role.md)
 
 
 ## Documentation For Authorization

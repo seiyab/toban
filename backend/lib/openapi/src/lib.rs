@@ -22,12 +22,40 @@ pub enum GetMembersResponse {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[must_use]
 pub enum GetMembersMemberIdResponse {
-    /// 200 response 
+    /// 200 response
     Status200
     (models::Member)
     ,
-    /// 404 response 
-    Status404
+    /// Internal Server Error 
+    InternalServerError
+    (models::Error)
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+pub enum GetRolesResponse {
+    /// Successful response
+    SuccessfulResponse
+    (Vec<models::Role>)
+    ,
+    /// Internal Server Error
+    InternalServerError
+    (models::Error)
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[must_use]
+pub enum GetRolesRoleIdResponse {
+    /// Successful response
+    SuccessfulResponse
+    (models::Role)
+    ,
+    /// Not Found
+    NotFound
+    (models::Error)
+    ,
+    /// Internal Server Error 
+    InternalServerError
     (models::Error)
 }
 
@@ -49,6 +77,17 @@ pub trait Api<C: Send + Sync> {
         member_id: i32,
         context: &C) -> Result<GetMembersMemberIdResponse, ApiError>;
 
+    /// get roles
+    async fn get_roles(
+        &self,
+        context: &C) -> Result<GetRolesResponse, ApiError>;
+
+    /// get a role
+    async fn get_roles_role_id(
+        &self,
+        role_id: i32,
+        context: &C) -> Result<GetRolesRoleIdResponse, ApiError>;
+
 }
 
 /// API where `Context` isn't passed on every API call
@@ -69,6 +108,17 @@ pub trait ApiNoContext<C: Send + Sync> {
         &self,
         member_id: i32,
         ) -> Result<GetMembersMemberIdResponse, ApiError>;
+
+    /// get roles
+    async fn get_roles(
+        &self,
+        ) -> Result<GetRolesResponse, ApiError>;
+
+    /// get a role
+    async fn get_roles_role_id(
+        &self,
+        role_id: i32,
+        ) -> Result<GetRolesRoleIdResponse, ApiError>;
 
 }
 
@@ -112,6 +162,25 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
     {
         let context = self.context().clone();
         self.api().get_members_member_id(member_id, &context).await
+    }
+
+    /// get roles
+    async fn get_roles(
+        &self,
+        ) -> Result<GetRolesResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().get_roles(&context).await
+    }
+
+    /// get a role
+    async fn get_roles_role_id(
+        &self,
+        role_id: i32,
+        ) -> Result<GetRolesRoleIdResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().get_roles_role_id(role_id, &context).await
     }
 
 }

@@ -18,10 +18,17 @@ import {
     Member,
     MemberFromJSON,
     MemberToJSON,
+    Role,
+    RoleFromJSON,
+    RoleToJSON,
 } from '../models';
 
 export interface GetMembersMemberIdRequest {
     memberId: number;
+}
+
+export interface GetRolesRoleIdRequest {
+    roleId: number;
 }
 
 /**
@@ -82,6 +89,62 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getMembersMemberId(requestParameters: GetMembersMemberIdRequest): Promise<Member> {
         const response = await this.getMembersMemberIdRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get roles
+     */
+    async getRolesRaw(): Promise<runtime.ApiResponse<Array<Role>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/roles`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(RoleFromJSON));
+    }
+
+    /**
+     * get roles
+     */
+    async getRoles(): Promise<Array<Role>> {
+        const response = await this.getRolesRaw();
+        return await response.value();
+    }
+
+    /**
+     * get a role
+     */
+    async getRolesRoleIdRaw(requestParameters: GetRolesRoleIdRequest): Promise<runtime.ApiResponse<Role>> {
+        if (requestParameters.roleId === null || requestParameters.roleId === undefined) {
+            throw new runtime.RequiredError('roleId','Required parameter requestParameters.roleId was null or undefined when calling getRolesRoleId.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/roles/{role_id}`.replace(`{${"role_id"}}`, encodeURIComponent(String(requestParameters.roleId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => RoleFromJSON(jsonValue));
+    }
+
+    /**
+     * get a role
+     */
+    async getRolesRoleId(requestParameters: GetRolesRoleIdRequest): Promise<Role> {
+        const response = await this.getRolesRoleIdRaw(requestParameters);
         return await response.value();
     }
 
