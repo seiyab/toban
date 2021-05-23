@@ -1,10 +1,6 @@
-// #[macro_use]
-// extern crate rocket_contrib;
-// extern crate diesel;
-// extern crate dotenv;
-
 use rocket_contrib::databases::diesel::{MysqlConnection};
 use diesel::prelude::*;
+use diesel::sql_types;
 use dotenv::dotenv;
 use std::env;
 
@@ -18,3 +14,6 @@ pub fn establish_connection() -> MysqlConnection {
 
 #[database("app")]
 pub struct AppDbConn(MysqlConnection);
+
+// sql_function!(fn last_insert_id() -> sql_types::Integer);
+no_arg_sql_function!(last_insert_id, sql_types::Integer);

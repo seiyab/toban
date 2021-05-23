@@ -20,27 +20,17 @@ pub enum GetMembersResponse {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-#[must_use]
 pub enum GetMembersMemberIdResponse {
     /// 200 response
     Status200
     (models::Member)
-    ,
-    /// Internal Server Error 
-    InternalServerError
-    (models::Error)
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-#[must_use]
 pub enum GetRolesResponse {
     /// Successful response
     SuccessfulResponse
     (Vec<models::Role>)
-    ,
-    /// Internal Server Error
-    InternalServerError
-    (models::Error)
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
@@ -53,10 +43,13 @@ pub enum GetRolesRoleIdResponse {
     /// Not Found
     NotFound
     (models::Error)
-    ,
-    /// Internal Server Error 
-    InternalServerError
-    (models::Error)
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum PostMembersResponse {
+    /// Successful
+    Successful
+    (models::New)
 }
 
 /// API
@@ -87,6 +80,12 @@ pub trait Api<C: Send + Sync> {
         &self,
         role_id: i32,
         context: &C) -> Result<GetRolesRoleIdResponse, ApiError>;
+
+    /// post a new member
+    async fn post_members(
+        &self,
+        new_member: Option<models::NewMember>,
+        context: &C) -> Result<PostMembersResponse, ApiError>;
 
 }
 
@@ -119,6 +118,12 @@ pub trait ApiNoContext<C: Send + Sync> {
         &self,
         role_id: i32,
         ) -> Result<GetRolesRoleIdResponse, ApiError>;
+
+    /// post a new member
+    async fn post_members(
+        &self,
+        new_member: Option<models::NewMember>,
+        ) -> Result<PostMembersResponse, ApiError>;
 
 }
 
@@ -181,6 +186,16 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
     {
         let context = self.context().clone();
         self.api().get_roles_role_id(role_id, &context).await
+    }
+
+    /// post a new member
+    async fn post_members(
+        &self,
+        new_member: Option<models::NewMember>,
+        ) -> Result<PostMembersResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().post_members(new_member, &context).await
     }
 
 }

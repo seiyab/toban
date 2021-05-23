@@ -8,6 +8,7 @@ Method | HTTP request | Description
 **get_members_member_id**](default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
 **get_roles**](default_api.md#get_roles) | **GET** /roles | get roles
 **get_roles_role_id**](default_api.md#get_roles_role_id) | **GET** /roles/{role_id} | get a role
+**post_members**](default_api.md#post_members) | **POST** /members | post a new member
 
 
 # **get_members**
@@ -100,6 +101,38 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **post_members**
+> models::New post_members(optional)
+post a new member
+
+### Required Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **optional** | **map[string]interface{}** | optional parameters | nil if no parameters
+
+### Optional Parameters
+Optional parameters are passed through a map[string]interface{}.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **new_member** | [**NewMember**](NewMember.md)|  | 
+
+### Return type
+
+[**models::New**](New.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -5,6 +5,8 @@ README.md
 api/openapi.yaml
 docs/Error.md
 docs/Member.md
+docs/New.md
+docs/NewMember.md
 docs/Role.md
 docs/default_api.md
 examples/ca.pem

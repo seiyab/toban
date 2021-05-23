@@ -100,6 +100,7 @@ use openapi_client::{
     GetMembersMemberIdResponse,
     GetRolesResponse,
     GetRolesRoleIdResponse,
+    PostMembersResponse,
 };
 use openapi_client::server::MakeService;
 use std::error::Error;
@@ -147,6 +148,17 @@ impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
     {
         let context = context.clone();
         info!("get_roles_role_id({}) - X-Span-ID: {:?}", role_id, context.get().0.clone());
+        Err("Generic failuare".into())
+    }
+
+    /// post a new member
+    async fn post_members(
+        &self,
+        new_member: Option<models::NewMember>,
+        context: &C) -> Result<PostMembersResponse, ApiError>
+    {
+        let context = context.clone();
+        info!("post_members({:?}) - X-Span-ID: {:?}", new_member, context.get().0.clone());
         Err("Generic failuare".into())
     }
 

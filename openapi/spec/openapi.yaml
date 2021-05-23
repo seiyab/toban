@@ -20,6 +20,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Member'
+    post:
+      operationId: post_members
+      summary: post a new member
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMember'
+      responses:
+        '201':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/New'
+
   /members/{member_id}:
     get:
       operationId: get_members_member_id
@@ -38,13 +54,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Member'
-        '500':
-          description: |
-            Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /roles:
     get:
       operationId: get_roles
@@ -59,12 +68,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Role'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
   /roles/{role_id}:
     get:
       operationId: get_roles_role_id
@@ -89,13 +92,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '500':
-          description: |
-            Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -109,6 +105,14 @@ components:
         message:
           description: human readable error message
           type: string
+    New:
+      description: general response for posting new resource
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+      required: [id]
     Member:
       description: member
       type: object
@@ -121,6 +125,14 @@ components:
           description: name of the member
           type: string
       required: [id, name]
+    NewMember:
+      description: new member
+      type: object
+      properties:
+        name:
+          description: name of the member
+          type: string
+      required: [name]
     Role:
       description: member
       type: object

@@ -9,6 +9,7 @@ use openapi_client::{Api, ApiNoContext, Client, ContextWrapperExt, models,
                       GetMembersMemberIdResponse,
                       GetRolesResponse,
                       GetRolesRoleIdResponse,
+                      PostMembersResponse,
                      };
 use clap::{App, Arg};
 
@@ -34,6 +35,7 @@ fn main() {
                 "GetMembersMemberId",
                 "GetRoles",
                 "GetRolesRoleId",
+                "PostMembers",
             ])
             .required(true)
             .index(1))
@@ -96,6 +98,12 @@ fn main() {
         Some("GetRolesRoleId") => {
             let result = rt.block_on(client.get_roles_role_id(
                   56
+            ));
+            info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());
+        },
+        Some("PostMembers") => {
+            let result = rt.block_on(client.post_members(
+                  None
             ));
             info!("{:?} (X-Span-ID: {:?})", result, (client.context() as &dyn Has<XSpanIdString>).get().clone());
         },
