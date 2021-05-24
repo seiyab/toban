@@ -1,5 +1,11 @@
-import { useQuery, UseQueryResult } from "react-query";
-import { Member, Role } from "@/fetch/openapi";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "react-query";
+import { Member, New, Role } from "@/fetch/openapi";
 import { client } from "../client";
 
 export function useMember(memberID: number): UseQueryResult<Member> {
@@ -14,6 +20,22 @@ export function useMember(memberID: number): UseQueryResult<Member> {
 export function useMembers(): UseQueryResult<Member[]> {
   const keys = ["useMembers"];
   return useQuery(keys, () => client.getMembers());
+}
+
+export function useNewMember(): UseMutationResult<
+  New,
+  unknown,
+  Omit<Member, "id">
+> {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (member: Omit<Member, "id">) => client.postMembers({ newMember: member }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("useMembers");
+      },
+    }
+  );
 }
 
 export function useRoles(): UseQueryResult<Role[]> {
