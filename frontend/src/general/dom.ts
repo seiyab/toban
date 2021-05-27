@@ -3,6 +3,7 @@ import * as React from "react";
 type UseTextInputResult = {
   value: string;
   handleChange: JSX.IntrinsicElements["input"]["onChange"];
+  setValue: React.Dispatch<string>;
 };
 
 export function useTextInput(initialValue?: string): UseTextInputResult {
@@ -15,5 +16,6 @@ export function useTextInput(initialValue?: string): UseTextInputResult {
   return {
     value,
     handleChange,
+    setValue,
   };
 }

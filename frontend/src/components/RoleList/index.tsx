@@ -6,6 +6,8 @@ import { Role } from "@/fetch/openapi";
 import { Emoji14 } from "@/components/Emoji";
 import { EmojiKey } from "@/fetch/extern/github";
 import { useRoles } from "@/fetch/hooks";
+import { useModal } from "../layout/Modal";
+import { NewRoleModal } from "../NewRoleModal";
 
 const useStyles = createUseStyles({
   roleList: {
@@ -20,6 +22,7 @@ const useStyles = createUseStyles({
     },
     marginLeft: "5px",
     marginRight: "5px",
+    cursor: "pointer",
   },
 });
 
@@ -32,6 +35,7 @@ export const RoleList: React.VoidFunctionComponent<RoleListProps> = ({
 }) => {
   const classes = useStyles();
   const roles = useRoles();
+  const newRoleControl = useModal();
   return (
     <div className={classNames(classes.roleList, className)}>
       <div>Roles</div>
@@ -40,8 +44,15 @@ export const RoleList: React.VoidFunctionComponent<RoleListProps> = ({
           {roles.data?.map((role) => (
             <RoleItem key={role.id} role={role} />
           ))}
+          <li>
+            <button onClick={newRoleControl.open}>+</button>
+          </li>
         </ul>
       </div>
+      <NewRoleModal
+        active={newRoleControl.active}
+        onClickOutside={newRoleControl.close}
+      />
     </div>
   );
 };
@@ -58,10 +69,8 @@ export const RoleItem: React.VoidFunctionComponent<RoleItemProps> = ({
   const classes = useStyles();
   return (
     <li className={classNames(classes.roleItem, className)}>
-      <button>
-        {role.emoji && <Emoji14 emoji={role.emoji as EmojiKey} />}
-        <span>{role.name}</span>
-      </button>
+      {role.emoji && <Emoji14 emoji={role.emoji as EmojiKey} />}
+      <span>{role.name}</span>
     </li>
   );
 };

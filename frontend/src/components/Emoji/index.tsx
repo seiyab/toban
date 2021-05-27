@@ -6,23 +6,26 @@ import { EmojiKey, useGitHubEmojis } from "@/fetch/extern/github";
 
 type Props = {
   emoji: EmojiKey;
-  className?: string;
-};
+} & Omit<JSX.IntrinsicElements["img"], "src">;
 
 const styles = {
   size14: {
     width: "14px",
     height: "14px",
   },
+  size20: {
+    width: "20px",
+    height: "20px",
+  },
 } as const;
 
 const useStyles = createUseStyles(styles);
 
 const create = (
-  className: keyof typeof styles
+  styleKey: keyof typeof styles
 ): React.VoidFunctionComponent<Props> => {
   // eslint-disable-next-line react/display-name
-  return (props) => {
+  return ({ className, ...props }) => {
     const classes = useStyles();
     const emojis = useGitHubEmojis();
     if (!emojis.isSuccess) return null;
@@ -32,8 +35,9 @@ const create = (
       <>
         {src && (
           <img
-            className={classNames(classes[className], props.className)}
+            className={classNames(classes[styleKey], className)}
             src={d[props.emoji]}
+            {...props}
           />
         )}
       </>
@@ -42,3 +46,4 @@ const create = (
 };
 
 export const Emoji14: React.VoidFunctionComponent<Props> = create("size14");
+export const Emoji20: React.VoidFunctionComponent<Props> = create("size20");
