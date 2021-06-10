@@ -1,4 +1,4 @@
-use crate::schema::{members};
+use crate::schema::{members, roles};
 
 #[derive(Queryable)]
 pub struct Member {
@@ -15,6 +15,13 @@ pub struct NewMember<'a>{
 #[derive(Queryable)]
 pub struct Role {
   pub id: i32,
+  pub name: String,
+  pub emoji: Option<String>
+}
+
+#[derive(Insertable)]
+#[table_name="roles"]
+pub struct NewRole {
   pub name: String,
   pub emoji: Option<String>
 }

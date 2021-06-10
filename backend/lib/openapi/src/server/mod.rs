@@ -26,7 +26,8 @@ use crate::{Api,
      GetMembersMemberIdResponse,
      GetRolesResponse,
      GetRolesRoleIdResponse,
-     PostMembersResponse
+     PostMembersResponse,
+     PostRolesResponse
 };
 
 mod paths {
@@ -432,6 +433,76 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                         }
             },
 
+            // PostRoles - POST /roles
+            &hyper::Method::POST if path.matched(paths::ID_ROLES) => {
+                // Body parameters (note that non-required body parameters will ignore garbage
+                // values, rather than causing a 400 response). Produce warning header and logs for
+                // any unused fields.
+                let result = body.to_raw().await;
+                match result {
+                            Ok(body) => {
+                                let mut unused_elements = Vec::new();
+                                let param_new_role: Option<models::NewRole> = if !body.is_empty() {
+                                    let deserializer = &mut serde_json::Deserializer::from_slice(&*body);
+                                    match serde_ignored::deserialize(deserializer, |path| {
+                                            warn!("Ignoring unknown field in body: {}", path);
+                                            unused_elements.push(path.to_string());
+                                    }) {
+                                        Ok(param_new_role) => param_new_role,
+                                        Err(_) => None,
+                                    }
+                                } else {
+                                    None
+                                };
+
+                                let result = api_impl.post_roles(
+                                            param_new_role,
+                                        &context
+                                    ).await;
+                                let mut response = Response::new(Body::empty());
+                                response.headers_mut().insert(
+                                            HeaderName::from_static("x-span-id"),
+                                            HeaderValue::from_str((&context as &dyn Has<XSpanIdString>).get().0.clone().to_string().as_str())
+                                                .expect("Unable to create X-Span-ID header value"));
+
+                                        if !unused_elements.is_empty() {
+                                            response.headers_mut().insert(
+                                                HeaderName::from_static("warning"),
+                                                HeaderValue::from_str(format!("Ignoring unknown fields in body: {:?}", unused_elements).as_str())
+                                                    .expect("Unable to create Warning header value"));
+                                        }
+
+                                        match result {
+                                            Ok(rsp) => match rsp {
+                                                PostRolesResponse::SuccessfulResponse
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(201).expect("Unable to turn 201 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for POST_ROLES_SUCCESSFUL_RESPONSE"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                *response.body_mut() = Body::from("An internal error occurred");
+                                            },
+                                        }
+
+                                        Ok(response)
+                            },
+                            Err(e) => Ok(Response::builder()
+                                                .status(StatusCode::BAD_REQUEST)
+                                                .body(Body::from(format!("Couldn't read body parameter NewRole: {}", e)))
+                                                .expect("Unable to create Bad Request response due to unable to read body parameter NewRole")),
+                        }
+            },
+
             _ if path.matched(paths::ID_MEMBERS) => method_not_allowed(),
             _ if path.matched(paths::ID_MEMBERS_MEMBER_ID) => method_not_allowed(),
             _ if path.matched(paths::ID_ROLES) => method_not_allowed(),
@@ -459,6 +530,8 @@ impl<T> RequestParser<T> for ApiRequestParser {
             &hyper::Method::GET if path.matched(paths::ID_ROLES_ROLE_ID) => Ok("GetRolesRoleId"),
             // PostMembers - POST /members
             &hyper::Method::POST if path.matched(paths::ID_MEMBERS) => Ok("PostMembers"),
+            // PostRoles - POST /roles
+            &hyper::Method::POST if path.matched(paths::ID_ROLES) => Ok("PostRoles"),
             _ => Err(()),
         }
     }

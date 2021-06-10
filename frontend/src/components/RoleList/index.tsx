@@ -51,7 +51,7 @@ export const RoleList: React.VoidFunctionComponent<RoleListProps> = ({
       </div>
       <NewRoleModal
         active={newRoleControl.active}
-        onClickOutside={newRoleControl.close}
+        close={newRoleControl.close}
       />
     </div>
   );

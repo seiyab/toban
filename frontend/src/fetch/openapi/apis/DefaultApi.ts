@@ -24,6 +24,9 @@ import {
     NewMember,
     NewMemberFromJSON,
     NewMemberToJSON,
+    NewRole,
+    NewRoleFromJSON,
+    NewRoleToJSON,
     Role,
     RoleFromJSON,
     RoleToJSON,
@@ -39,6 +42,10 @@ export interface GetRolesRoleIdRequest {
 
 export interface PostMembersRequest {
     newMember?: NewMember;
+}
+
+export interface PostRolesRequest {
+    newRole?: NewRole;
 }
 
 /**
@@ -184,6 +191,35 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async postMembers(requestParameters: PostMembersRequest): Promise<New> {
         const response = await this.postMembersRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * post a new member
+     */
+    async postRolesRaw(requestParameters: PostRolesRequest): Promise<runtime.ApiResponse<New>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/roles`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: NewRoleToJSON(requestParameters.newRole),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => NewFromJSON(jsonValue));
+    }
+
+    /**
+     * post a new member
+     */
+    async postRoles(requestParameters: PostRolesRequest): Promise<New> {
+        const response = await this.postRolesRaw(requestParameters);
         return await response.value();
     }
 

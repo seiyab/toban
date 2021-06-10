@@ -16,46 +16,39 @@ import { exists, mapValues } from '../runtime';
 /**
  * role
  * @export
- * @interface Role
+ * @interface NewRole
  */
-export interface Role {
-    /**
-     * role id
-     * @type {number}
-     * @memberof Role
-     */
-    id: number;
+export interface NewRole {
     /**
      * name of the role
      * @type {string}
-     * @memberof Role
+     * @memberof NewRole
      */
     name: string;
     /**
      * emoji icon key of the role (e.g. '+1', 'tada')
      * @type {string}
-     * @memberof Role
+     * @memberof NewRole
      */
     emoji?: string;
 }
 
-export function RoleFromJSON(json: any): Role {
-    return RoleFromJSONTyped(json, false);
+export function NewRoleFromJSON(json: any): NewRole {
+    return NewRoleFromJSONTyped(json, false);
 }
 
-export function RoleFromJSONTyped(json: any, ignoreDiscriminator: boolean): Role {
+export function NewRoleFromJSONTyped(json: any, ignoreDiscriminator: boolean): NewRole {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
-        'id': json['id'],
         'name': json['name'],
         'emoji': !exists(json, 'emoji') ? undefined : json['emoji'],
     };
 }
 
-export function RoleToJSON(value?: Role | null): any {
+export function NewRoleToJSON(value?: NewRole | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -64,7 +57,6 @@ export function RoleToJSON(value?: Role | null): any {
     }
     return {
         
-        'id': value.id,
         'name': value.name,
         'emoji': value.emoji,
     };

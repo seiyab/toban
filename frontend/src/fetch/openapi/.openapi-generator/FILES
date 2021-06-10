@@ -5,6 +5,7 @@ models/Member.ts
 models/ModelError.ts
 models/New.ts
 models/NewMember.ts
+models/NewRole.ts
 models/Role.ts
 models/index.ts
 runtime.ts

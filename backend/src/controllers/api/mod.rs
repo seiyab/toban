@@ -12,5 +12,6 @@ pub fn routes() -> Vec<Route, Global>{
     member::post_members,
     role::get_role,
     role::get_roles,
+    role::post_roles,
   ]
 }

@@ -52,6 +52,13 @@ pub enum PostMembersResponse {
     (models::New)
 }
 
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum PostRolesResponse {
+    /// Successful response
+    SuccessfulResponse
+    (models::New)
+}
+
 /// API
 #[async_trait]
 pub trait Api<C: Send + Sync> {
@@ -86,6 +93,12 @@ pub trait Api<C: Send + Sync> {
         &self,
         new_member: Option<models::NewMember>,
         context: &C) -> Result<PostMembersResponse, ApiError>;
+
+    /// post a new member
+    async fn post_roles(
+        &self,
+        new_role: Option<models::NewRole>,
+        context: &C) -> Result<PostRolesResponse, ApiError>;
 
 }
 
@@ -124,6 +137,12 @@ pub trait ApiNoContext<C: Send + Sync> {
         &self,
         new_member: Option<models::NewMember>,
         ) -> Result<PostMembersResponse, ApiError>;
+
+    /// post a new member
+    async fn post_roles(
+        &self,
+        new_role: Option<models::NewRole>,
+        ) -> Result<PostRolesResponse, ApiError>;
 
 }
 
@@ -196,6 +215,16 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
     {
         let context = self.context().clone();
         self.api().post_members(new_member, &context).await
+    }
+
+    /// post a new member
+    async fn post_roles(
+        &self,
+        new_role: Option<models::NewRole>,
+        ) -> Result<PostRolesResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().post_roles(new_role, &context).await
     }
 
 }

@@ -42,3 +42,19 @@ export function useRoles(): UseQueryResult<Role[]> {
   const keys = ["useRoles"];
   return useQuery(keys, () => client.getRoles());
 }
+
+export function useNewRole(): UseMutationResult<
+  New,
+  unknown,
+  Omit<Role, "id">
+> {
+  const queryClient = useQueryClient();
+  return useMutation(
+    (role: Omit<Role, "id">) => client.postRoles({ newRole: role }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("useRoles");
+      },
+    }
+  );
+}

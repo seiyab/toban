@@ -68,6 +68,21 @@ paths:
                 type: array
           description: Successful response
       summary: get roles
+    post:
+      operationId: post_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRole'
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/New'
+          description: Successful response
+      summary: post a new member
   /roles/{role_id}:
     get:
       operationId: get_roles_role_id
@@ -146,7 +161,7 @@ components:
       - name
       type: object
     Role:
-      description: member
+      description: role
       example:
         emoji: emoji
         name: name
@@ -164,6 +179,21 @@ components:
           type: string
       required:
       - id
+      - name
+      type: object
+    NewRole:
+      description: role
+      example:
+        emoji: emoji
+        name: name
+      properties:
+        name:
+          description: name of the role
+          type: string
+        emoji:
+          description: emoji icon key of the role (e.g. '+1', 'tada')
+          type: string
+      required:
       - name
       type: object
 
