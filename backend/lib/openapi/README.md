@@ -14,7 +14,7 @@ To see how to make this your own, look here:
 [README]((https://openapi-generator.tech))
 
 - API version: 0.0.1
-- Build date: 2021-06-10T09:53:55.725363Z[Etc/UTC]
+- Build date: 2021-06-11T13:16:15.550619Z[Etc/UTC]
 
 
 
@@ -61,6 +61,7 @@ cargo run --example server
 To run a client, follow one of the following simple steps:
 
 ```
+cargo run --example client GetAssignments
 cargo run --example client GetMembers
 cargo run --example client GetMembersMemberId
 cargo run --example client GetRoles
@@ -100,6 +101,7 @@ All URIs are relative to *http://localhost:8080/api*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**get_assignments**](docs/default_api.md#get_assignments) | **GET** /assignments | get assignments
 [**get_members**](docs/default_api.md#get_members) | **GET** /members | get members
 [**get_members_member_id**](docs/default_api.md#get_members_member_id) | **GET** /members/{member_id} | get a member
 [**get_roles**](docs/default_api.md#get_roles) | **GET** /roles | get roles
@@ -110,6 +112,7 @@ Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [Assignment](docs/Assignment.md)
  - [Error](docs/Error.md)
  - [Member](docs/Member.md)
  - [New](docs/New.md)

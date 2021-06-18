@@ -3,6 +3,7 @@
 Cargo.toml
 README.md
 api/openapi.yaml
+docs/Assignment.md
 docs/Error.md
 docs/Member.md
 docs/New.md

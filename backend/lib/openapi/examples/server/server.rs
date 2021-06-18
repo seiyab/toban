@@ -96,6 +96,7 @@ impl<C> Server<C> {
 
 use openapi_client::{
     Api,
+    GetAssignmentsResponse,
     GetMembersResponse,
     GetMembersMemberIdResponse,
     GetRolesResponse,
@@ -110,6 +111,18 @@ use swagger::ApiError;
 #[async_trait]
 impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
 {
+    /// get assignments
+    async fn get_assignments(
+        &self,
+        from: chrono::DateTime::<chrono::Utc>,
+        to: chrono::DateTime::<chrono::Utc>,
+        context: &C) -> Result<GetAssignmentsResponse, ApiError>
+    {
+        let context = context.clone();
+        info!("get_assignments({}, {}) - X-Span-ID: {:?}", from, to, context.get().0.clone());
+        Err("Generic failuare".into())
+    }
+
     /// get members
     async fn get_members(
         &self,

@@ -1,3 +1,4 @@
+export * from './Assignment';
 export * from './Member';
 export * from './ModelError';
 export * from './New';

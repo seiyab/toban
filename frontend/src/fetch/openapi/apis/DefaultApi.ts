@@ -15,6 +15,9 @@
 
 import * as runtime from '../runtime';
 import {
+    Assignment,
+    AssignmentFromJSON,
+    AssignmentToJSON,
     Member,
     MemberFromJSON,
     MemberToJSON,
@@ -31,6 +34,11 @@ import {
     RoleFromJSON,
     RoleToJSON,
 } from '../models';
+
+export interface GetAssignmentsRequest {
+    from: Date;
+    to: Date;
+}
 
 export interface GetMembersMemberIdRequest {
     memberId: number;
@@ -52,6 +60,48 @@ export interface PostRolesRequest {
  * 
  */
 export class DefaultApi extends runtime.BaseAPI {
+
+    /**
+     * get assignments
+     */
+    async getAssignmentsRaw(requestParameters: GetAssignmentsRequest): Promise<runtime.ApiResponse<Array<Assignment>>> {
+        if (requestParameters.from === null || requestParameters.from === undefined) {
+            throw new runtime.RequiredError('from','Required parameter requestParameters.from was null or undefined when calling getAssignments.');
+        }
+
+        if (requestParameters.to === null || requestParameters.to === undefined) {
+            throw new runtime.RequiredError('to','Required parameter requestParameters.to was null or undefined when calling getAssignments.');
+        }
+
+        const queryParameters: any = {};
+
+        if (requestParameters.from !== undefined) {
+            queryParameters['from'] = (requestParameters.from as any).toISOString().substr(0,10);
+        }
+
+        if (requestParameters.to !== undefined) {
+            queryParameters['to'] = (requestParameters.to as any).toISOString().substr(0,10);
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/assignments`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AssignmentFromJSON));
+    }
+
+    /**
+     * get assignments
+     */
+    async getAssignments(requestParameters: GetAssignmentsRequest): Promise<Array<Assignment>> {
+        const response = await this.getAssignmentsRaw(requestParameters);
+        return await response.value();
+    }
 
     /**
      * get members

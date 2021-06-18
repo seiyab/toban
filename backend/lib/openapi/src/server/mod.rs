@@ -22,6 +22,7 @@ pub use crate::context;
 type ServiceFuture = BoxFuture<'static, Result<Response<Body>, crate::ServiceError>>;
 
 use crate::{Api,
+     GetAssignmentsResponse,
      GetMembersResponse,
      GetMembersMemberIdResponse,
      GetRolesResponse,
@@ -35,6 +36,7 @@ mod paths {
 
     lazy_static! {
         pub static ref GLOBAL_REGEX_SET: regex::RegexSet = regex::RegexSet::new(vec![
+            r"^/api/assignments$",
             r"^/api/members$",
             r"^/api/members/(?P<member_id>[^/?#]*)$",
             r"^/api/roles$",
@@ -42,15 +44,16 @@ mod paths {
         ])
         .expect("Unable to create global regex set");
     }
-    pub(crate) static ID_MEMBERS: usize = 0;
-    pub(crate) static ID_MEMBERS_MEMBER_ID: usize = 1;
+    pub(crate) static ID_ASSIGNMENTS: usize = 0;
+    pub(crate) static ID_MEMBERS: usize = 1;
+    pub(crate) static ID_MEMBERS_MEMBER_ID: usize = 2;
     lazy_static! {
         pub static ref REGEX_MEMBERS_MEMBER_ID: regex::Regex =
             regex::Regex::new(r"^/api/members/(?P<member_id>[^/?#]*)$")
                 .expect("Unable to create regex for MEMBERS_MEMBER_ID");
     }
-    pub(crate) static ID_ROLES: usize = 2;
-    pub(crate) static ID_ROLES_ROLE_ID: usize = 3;
+    pub(crate) static ID_ROLES: usize = 3;
+    pub(crate) static ID_ROLES_ROLE_ID: usize = 4;
     lazy_static! {
         pub static ref REGEX_ROLES_ROLE_ID: regex::Regex =
             regex::Regex::new(r"^/api/roles/(?P<role_id>[^/?#]*)$")
@@ -159,6 +162,95 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
         let path = paths::GLOBAL_REGEX_SET.matches(uri.path());
 
         match &method {
+
+            // GetAssignments - GET /assignments
+            &hyper::Method::GET if path.matched(paths::ID_ASSIGNMENTS) => {
+                // Query parameters (note that non-required or collection query parameters will ignore garbage values, rather than causing a 400 response)
+                let query_params = form_urlencoded::parse(uri.query().unwrap_or_default().as_bytes()).collect::<Vec<_>>();
+                let param_from = query_params.iter().filter(|e| e.0 == "from").map(|e| e.1.to_owned())
+                    .nth(0);
+                let param_from = match param_from {
+                    Some(param_from) => {
+                        let param_from =
+                            <chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str
+                                (&param_from);
+                        match param_from {
+                            Ok(param_from) => Some(param_from),
+                            Err(e) => return Ok(Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(Body::from(format!("Couldn't parse query parameter from - doesn't match schema: {}", e)))
+                                .expect("Unable to create Bad Request response for invalid query parameter from")),
+                        }
+                    },
+                    None => None,
+                };
+                let param_from = match param_from {
+                    Some(param_from) => param_from,
+                    None => return Ok(Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from("Missing required query parameter from"))
+                        .expect("Unable to create Bad Request response for missing query parameter from")),
+                };
+                let param_to = query_params.iter().filter(|e| e.0 == "to").map(|e| e.1.to_owned())
+                    .nth(0);
+                let param_to = match param_to {
+                    Some(param_to) => {
+                        let param_to =
+                            <chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str
+                                (&param_to);
+                        match param_to {
+                            Ok(param_to) => Some(param_to),
+                            Err(e) => return Ok(Response::builder()
+                                .status(StatusCode::BAD_REQUEST)
+                                .body(Body::from(format!("Couldn't parse query parameter to - doesn't match schema: {}", e)))
+                                .expect("Unable to create Bad Request response for invalid query parameter to")),
+                        }
+                    },
+                    None => None,
+                };
+                let param_to = match param_to {
+                    Some(param_to) => param_to,
+                    None => return Ok(Response::builder()
+                        .status(StatusCode::BAD_REQUEST)
+                        .body(Body::from("Missing required query parameter to"))
+                        .expect("Unable to create Bad Request response for missing query parameter to")),
+                };
+
+                                let result = api_impl.get_assignments(
+                                            param_from,
+                                            param_to,
+                                        &context
+                                    ).await;
+                                let mut response = Response::new(Body::empty());
+                                response.headers_mut().insert(
+                                            HeaderName::from_static("x-span-id"),
+                                            HeaderValue::from_str((&context as &dyn Has<XSpanIdString>).get().0.clone().to_string().as_str())
+                                                .expect("Unable to create X-Span-ID header value"));
+
+                                        match result {
+                                            Ok(rsp) => match rsp {
+                                                GetAssignmentsResponse::SuccessfulResponse
+                                                    (body)
+                                                => {
+                                                    *response.status_mut() = StatusCode::from_u16(200).expect("Unable to turn 200 into a StatusCode");
+                                                    response.headers_mut().insert(
+                                                        CONTENT_TYPE,
+                                                        HeaderValue::from_str("application/json")
+                                                            .expect("Unable to create Content-Type header for GET_ASSIGNMENTS_SUCCESSFUL_RESPONSE"));
+                                                    let body = serde_json::to_string(&body).expect("impossible to fail to serialize");
+                                                    *response.body_mut() = Body::from(body);
+                                                },
+                                            },
+                                            Err(_) => {
+                                                // Application code returned an error. This should not happen, as the implementation should
+                                                // return a valid response.
+                                                *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                *response.body_mut() = Body::from("An internal error occurred");
+                                            },
+                                        }
+
+                                        Ok(response)
+            },
 
             // GetMembers - GET /members
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS) => {
@@ -503,6 +595,7 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                         }
             },
 
+            _ if path.matched(paths::ID_ASSIGNMENTS) => method_not_allowed(),
             _ if path.matched(paths::ID_MEMBERS) => method_not_allowed(),
             _ if path.matched(paths::ID_MEMBERS_MEMBER_ID) => method_not_allowed(),
             _ if path.matched(paths::ID_ROLES) => method_not_allowed(),
@@ -520,6 +613,8 @@ impl<T> RequestParser<T> for ApiRequestParser {
     fn parse_operation_id(request: &Request<T>) -> Result<&'static str, ()> {
         let path = paths::GLOBAL_REGEX_SET.matches(request.uri().path());
         match request.method() {
+            // GetAssignments - GET /assignments
+            &hyper::Method::GET if path.matched(paths::ID_ASSIGNMENTS) => Ok("GetAssignments"),
             // GetMembers - GET /members
             &hyper::Method::GET if path.matched(paths::ID_MEMBERS) => Ok("GetMembers"),
             // GetMembersMemberId - GET /members/{member_id}

@@ -8,6 +8,7 @@ edition = "2018"
 [dependencies]
 rocket = "0.4.7"
 dotenv = "0.15.0"
+chrono = "0.4"
 
 [dependencies.serde]
 version = "1.0"
@@ -15,7 +16,7 @@ features = ["derive"]
 
 [dependencies.diesel]
 version = "1.4.6"
-features = ["mysql"]
+features = ["mysql", "chrono"]
 
 [dependencies.rocket_contrib]
 version = "0.4.7"

@@ -109,6 +109,36 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: Not Found
       summary: get a role
+  /assignments:
+    get:
+      operationId: get_assignments
+      parameters:
+      - explode: true
+        in: query
+        name: from
+        required: true
+        schema:
+          format: date
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: to
+        required: true
+        schema:
+          format: date
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Assignment'
+                type: array
+          description: Successful response
+      summary: get assignments
 components:
   schemas:
     Error:
@@ -195,5 +225,41 @@ components:
           type: string
       required:
       - name
+      type: object
+    Assignment:
+      description: assignment of role
+      example:
+        member_id: 1
+        end_at: 2000-01-23
+        role_id: 6
+        id: 0
+        start_at: 2000-01-23
+      properties:
+        id:
+          description: assignment id
+          format: int32
+          type: integer
+        role_id:
+          description: role id
+          format: int32
+          type: integer
+        start_at:
+          description: date when assignment start
+          format: date
+          type: string
+        end_at:
+          description: date when assignment end (inclusive)
+          format: date
+          type: string
+        member_id:
+          description: member id
+          format: int32
+          type: integer
+      required:
+      - end_at
+      - id
+      - member_id
+      - role_id
+      - start_at
       type: object
 

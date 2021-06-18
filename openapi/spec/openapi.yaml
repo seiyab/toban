@@ -107,6 +107,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /assignments:
+    get:
+      operationId: get_assignments
+      summary: get assignments
+      parameters:
+      - name: from
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Assignment'
 
 components:
   schemas:
@@ -174,3 +200,28 @@ components:
           description: emoji icon key of the role (e.g. '+1', 'tada')
           type: string
       required: [name]
+    Assignment:
+      description: assignment of role
+      type: object
+      properties:
+        id:
+          description: assignment id
+          type: integer
+          format: int32
+        role_id:
+          description: role id
+          type: integer
+          format: int32
+        start_at:
+          description: date when assignment start
+          type: string
+          format: date
+        end_at:
+          description: date when assignment end (inclusive)
+          type: string
+          format: date
+        member_id:
+          description: member id
+          type: integer
+          format: int32
+      required: [id, role_id, start_at, end_at, member_id]

@@ -4,6 +4,164 @@ use crate::models;
 #[cfg(any(feature = "client", feature = "server"))]
 use crate::header;
 
+/// assignment of role
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+pub struct Assignment {
+    /// assignment id
+    #[serde(rename = "id")]
+    pub id: i32,
+
+    /// role id
+    #[serde(rename = "role_id")]
+    pub role_id: i32,
+
+    /// date when assignment start
+    #[serde(rename = "start_at")]
+    pub start_at: chrono::DateTime::<chrono::Utc>,
+
+    /// date when assignment end (inclusive)
+    #[serde(rename = "end_at")]
+    pub end_at: chrono::DateTime::<chrono::Utc>,
+
+    /// member id
+    #[serde(rename = "member_id")]
+    pub member_id: i32,
+
+}
+
+impl Assignment {
+    pub fn new(id: i32, role_id: i32, start_at: chrono::DateTime::<chrono::Utc>, end_at: chrono::DateTime::<chrono::Utc>, member_id: i32, ) -> Assignment {
+        Assignment {
+            id: id,
+            role_id: role_id,
+            start_at: start_at,
+            end_at: end_at,
+            member_id: member_id,
+        }
+    }
+}
+
+/// Converts the Assignment value to the Query Parameters representation (style=form, explode=false)
+/// specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde serializer
+impl std::string::ToString for Assignment {
+    fn to_string(&self) -> String {
+        let mut params: Vec<String> = vec![];
+
+        params.push("id".to_string());
+        params.push(self.id.to_string());
+
+
+        params.push("role_id".to_string());
+        params.push(self.role_id.to_string());
+
+        // Skipping start_at in query parameter serialization
+
+        // Skipping end_at in query parameter serialization
+
+
+        params.push("member_id".to_string());
+        params.push(self.member_id.to_string());
+
+        params.join(",").to_string()
+    }
+}
+
+/// Converts Query Parameters representation (style=form, explode=false) to a Assignment value
+/// as specified in https://swagger.io/docs/specification/serialization/
+/// Should be implemented in a serde deserializer
+impl std::str::FromStr for Assignment {
+    type Err = String;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        #[derive(Default)]
+        // An intermediate representation of the struct to use for parsing.
+        struct IntermediateRep {
+            pub id: Vec<i32>,
+            pub role_id: Vec<i32>,
+            pub start_at: Vec<chrono::DateTime::<chrono::Utc>>,
+            pub end_at: Vec<chrono::DateTime::<chrono::Utc>>,
+            pub member_id: Vec<i32>,
+        }
+
+        let mut intermediate_rep = IntermediateRep::default();
+
+        // Parse into intermediate representation
+        let mut string_iter = s.split(',').into_iter();
+        let mut key_result = string_iter.next();
+
+        while key_result.is_some() {
+            let val = match string_iter.next() {
+                Some(x) => x,
+                None => return std::result::Result::Err("Missing value while parsing Assignment".to_string())
+            };
+
+            if let Some(key) = key_result {
+                match key {
+                    "id" => intermediate_rep.id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "role_id" => intermediate_rep.role_id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "start_at" => intermediate_rep.start_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "end_at" => intermediate_rep.end_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "member_id" => intermediate_rep.member_id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    _ => return std::result::Result::Err("Unexpected key while parsing Assignment".to_string())
+                }
+            }
+
+            // Get the next key
+            key_result = string_iter.next();
+        }
+
+        // Use the intermediate representation to return the struct
+        std::result::Result::Ok(Assignment {
+            id: intermediate_rep.id.into_iter().next().ok_or("id missing in Assignment".to_string())?,
+            role_id: intermediate_rep.role_id.into_iter().next().ok_or("role_id missing in Assignment".to_string())?,
+            start_at: intermediate_rep.start_at.into_iter().next().ok_or("start_at missing in Assignment".to_string())?,
+            end_at: intermediate_rep.end_at.into_iter().next().ok_or("end_at missing in Assignment".to_string())?,
+            member_id: intermediate_rep.member_id.into_iter().next().ok_or("member_id missing in Assignment".to_string())?,
+        })
+    }
+}
+
+// Methods for converting between header::IntoHeaderValue<Assignment> and hyper::header::HeaderValue
+
+#[cfg(any(feature = "client", feature = "server"))]
+impl std::convert::TryFrom<header::IntoHeaderValue<Assignment>> for hyper::header::HeaderValue {
+    type Error = String;
+
+    fn try_from(hdr_value: header::IntoHeaderValue<Assignment>) -> std::result::Result<Self, Self::Error> {
+        let hdr_value = hdr_value.to_string();
+        match hyper::header::HeaderValue::from_str(&hdr_value) {
+             std::result::Result::Ok(value) => std::result::Result::Ok(value),
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Invalid header value for Assignment - value: {} is invalid {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+#[cfg(any(feature = "client", feature = "server"))]
+impl std::convert::TryFrom<hyper::header::HeaderValue> for header::IntoHeaderValue<Assignment> {
+    type Error = String;
+
+    fn try_from(hdr_value: hyper::header::HeaderValue) -> std::result::Result<Self, Self::Error> {
+        match hdr_value.to_str() {
+             std::result::Result::Ok(value) => {
+                    match <Assignment as std::str::FromStr>::from_str(value) {
+                        std::result::Result::Ok(value) => std::result::Result::Ok(header::IntoHeaderValue(value)),
+                        std::result::Result::Err(err) => std::result::Result::Err(
+                            format!("Unable to convert header value '{}' into Assignment - {}",
+                                value, err))
+                    }
+             },
+             std::result::Result::Err(e) => std::result::Result::Err(
+                 format!("Unable to convert header: {:?} to string: {}",
+                     hdr_value, e))
+        }
+    }
+}
+
+
 /// general error response
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]

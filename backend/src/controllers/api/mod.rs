@@ -4,6 +4,7 @@ use rocket::Route;
 
 mod member;
 mod role;
+mod assignments;
 
 pub fn routes() -> Vec<Route, Global>{
   routes![
@@ -13,5 +14,6 @@ pub fn routes() -> Vec<Route, Global>{
     role::get_role,
     role::get_roles,
     role::post_roles,
+    assignments::get_assignments,
   ]
 }

@@ -13,6 +13,13 @@ pub const BASE_PATH: &'static str = "/api";
 pub const API_VERSION: &'static str = "0.0.1";
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub enum GetAssignmentsResponse {
+    /// Successful response
+    SuccessfulResponse
+    (Vec<models::Assignment>)
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum GetMembersResponse {
     /// 200 response 
     Status200
@@ -66,6 +73,13 @@ pub trait Api<C: Send + Sync> {
         Poll::Ready(Ok(()))
     }
 
+    /// get assignments
+    async fn get_assignments(
+        &self,
+        from: chrono::DateTime::<chrono::Utc>,
+        to: chrono::DateTime::<chrono::Utc>,
+        context: &C) -> Result<GetAssignmentsResponse, ApiError>;
+
     /// get members
     async fn get_members(
         &self,
@@ -109,6 +123,13 @@ pub trait ApiNoContext<C: Send + Sync> {
     fn poll_ready(&self, _cx: &mut Context) -> Poll<Result<(), Box<dyn Error + Send + Sync + 'static>>>;
 
     fn context(&self) -> &C;
+
+    /// get assignments
+    async fn get_assignments(
+        &self,
+        from: chrono::DateTime::<chrono::Utc>,
+        to: chrono::DateTime::<chrono::Utc>,
+        ) -> Result<GetAssignmentsResponse, ApiError>;
 
     /// get members
     async fn get_members(
@@ -167,6 +188,17 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
 
     fn context(&self) -> &C {
         ContextWrapper::context(self)
+    }
+
+    /// get assignments
+    async fn get_assignments(
+        &self,
+        from: chrono::DateTime::<chrono::Utc>,
+        to: chrono::DateTime::<chrono::Utc>,
+        ) -> Result<GetAssignmentsResponse, ApiError>
+    {
+        let context = self.context().clone();
+        self.api().get_assignments(from, to, &context).await
     }
 
     /// get members

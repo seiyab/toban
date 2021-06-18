@@ -15,5 +15,4 @@ pub fn establish_connection() -> MysqlConnection {
 #[database("app")]
 pub struct AppDbConn(MysqlConnection);
 
-// sql_function!(fn last_insert_id() -> sql_types::Integer);
 no_arg_sql_function!(last_insert_id, sql_types::Integer);

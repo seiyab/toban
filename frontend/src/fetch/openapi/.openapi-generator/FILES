@@ -1,6 +1,7 @@
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
+models/Assignment.ts
 models/Member.ts
 models/ModelError.ts
 models/New.ts
