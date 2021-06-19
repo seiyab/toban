@@ -136,7 +136,7 @@ impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
     /// get a member
     async fn get_members_member_id(
         &self,
-        member_id: i32,
+        member_id: i64,
         context: &C) -> Result<GetMembersMemberIdResponse, ApiError>
     {
         let context = context.clone();
@@ -157,7 +157,7 @@ impl<C> Api<C> for Server<C> where C: Has<XSpanIdString> + Send + Sync
     /// get a role
     async fn get_roles_role_id(
         &self,
-        role_id: i32,
+        role_id: i64,
         context: &C) -> Result<GetRolesRoleIdResponse, ApiError>
     {
         let context = context.clone();

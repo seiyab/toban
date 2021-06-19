@@ -69,7 +69,7 @@ get a member
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-  **member_id** | **i32**|  | 
+  **member_id** | **i64**|  | 
 
 ### Return type
 
@@ -116,7 +116,7 @@ get a role
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-  **role_id** | **i32**|  | 
+  **role_id** | **i64**|  | 
 
 ### Return type
 

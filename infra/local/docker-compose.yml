@@ -1,12 +1,13 @@
 services:
   db:
-    image: mysql:8.0.24
-    command: --default-authentication-plugin=mysql_native_password
+    image: postgres:13-alpine
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: Jeannine921{telecommunications
-      MYSQL_DATABASE: app
+      POSTGRES_PASSWORD: Jeannine921{telecommunications
+      POSTGRES_USER: app
+      POSTGRES_DB: app
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
-      - ./volume:/var/lib/mysql
+      - ./volume:/var/lib/postgresql/data

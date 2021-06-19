@@ -10,11 +10,11 @@ use crate::header;
 pub struct Assignment {
     /// assignment id
     #[serde(rename = "id")]
-    pub id: i32,
+    pub id: i64,
 
     /// role id
     #[serde(rename = "role_id")]
-    pub role_id: i32,
+    pub role_id: i64,
 
     /// date when assignment start
     #[serde(rename = "start_at")]
@@ -26,12 +26,12 @@ pub struct Assignment {
 
     /// member id
     #[serde(rename = "member_id")]
-    pub member_id: i32,
+    pub member_id: i64,
 
 }
 
 impl Assignment {
-    pub fn new(id: i32, role_id: i32, start_at: chrono::DateTime::<chrono::Utc>, end_at: chrono::DateTime::<chrono::Utc>, member_id: i32, ) -> Assignment {
+    pub fn new(id: i64, role_id: i64, start_at: chrono::DateTime::<chrono::Utc>, end_at: chrono::DateTime::<chrono::Utc>, member_id: i64, ) -> Assignment {
         Assignment {
             id: id,
             role_id: role_id,
@@ -78,11 +78,11 @@ impl std::str::FromStr for Assignment {
         #[derive(Default)]
         // An intermediate representation of the struct to use for parsing.
         struct IntermediateRep {
-            pub id: Vec<i32>,
-            pub role_id: Vec<i32>,
+            pub id: Vec<i64>,
+            pub role_id: Vec<i64>,
             pub start_at: Vec<chrono::DateTime::<chrono::Utc>>,
             pub end_at: Vec<chrono::DateTime::<chrono::Utc>>,
-            pub member_id: Vec<i32>,
+            pub member_id: Vec<i64>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -99,11 +99,11 @@ impl std::str::FromStr for Assignment {
 
             if let Some(key) = key_result {
                 match key {
-                    "id" => intermediate_rep.id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
-                    "role_id" => intermediate_rep.role_id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "id" => intermediate_rep.id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "role_id" => intermediate_rep.role_id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     "start_at" => intermediate_rep.start_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     "end_at" => intermediate_rep.end_at.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
-                    "member_id" => intermediate_rep.member_id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "member_id" => intermediate_rep.member_id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     _ => return std::result::Result::Err("Unexpected key while parsing Assignment".to_string())
                 }
             }
@@ -300,7 +300,7 @@ impl std::convert::TryFrom<hyper::header::HeaderValue> for header::IntoHeaderVal
 pub struct Member {
     /// member id
     #[serde(rename = "id")]
-    pub id: i32,
+    pub id: i64,
 
     /// name of the member
     #[serde(rename = "name")]
@@ -309,7 +309,7 @@ pub struct Member {
 }
 
 impl Member {
-    pub fn new(id: i32, name: String, ) -> Member {
+    pub fn new(id: i64, name: String, ) -> Member {
         Member {
             id: id,
             name: name,
@@ -345,7 +345,7 @@ impl std::str::FromStr for Member {
         #[derive(Default)]
         // An intermediate representation of the struct to use for parsing.
         struct IntermediateRep {
-            pub id: Vec<i32>,
+            pub id: Vec<i64>,
             pub name: Vec<String>,
         }
 
@@ -363,7 +363,7 @@ impl std::str::FromStr for Member {
 
             if let Some(key) = key_result {
                 match key {
-                    "id" => intermediate_rep.id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "id" => intermediate_rep.id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     "name" => intermediate_rep.name.push(<String as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     _ => return std::result::Result::Err("Unexpected key while parsing Member".to_string())
                 }
@@ -425,12 +425,12 @@ impl std::convert::TryFrom<hyper::header::HeaderValue> for header::IntoHeaderVal
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct New {
     #[serde(rename = "id")]
-    pub id: i32,
+    pub id: i64,
 
 }
 
 impl New {
-    pub fn new(id: i32, ) -> New {
+    pub fn new(id: i64, ) -> New {
         New {
             id: id,
         }
@@ -461,7 +461,7 @@ impl std::str::FromStr for New {
         #[derive(Default)]
         // An intermediate representation of the struct to use for parsing.
         struct IntermediateRep {
-            pub id: Vec<i32>,
+            pub id: Vec<i64>,
         }
 
         let mut intermediate_rep = IntermediateRep::default();
@@ -478,7 +478,7 @@ impl std::str::FromStr for New {
 
             if let Some(key) = key_result {
                 match key {
-                    "id" => intermediate_rep.id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "id" => intermediate_rep.id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     _ => return std::result::Result::Err("Unexpected key while parsing New".to_string())
                 }
             }
@@ -782,7 +782,7 @@ impl std::convert::TryFrom<hyper::header::HeaderValue> for header::IntoHeaderVal
 pub struct Role {
     /// role id
     #[serde(rename = "id")]
-    pub id: i32,
+    pub id: i64,
 
     /// name of the role
     #[serde(rename = "name")]
@@ -796,7 +796,7 @@ pub struct Role {
 }
 
 impl Role {
-    pub fn new(id: i32, name: String, ) -> Role {
+    pub fn new(id: i64, name: String, ) -> Role {
         Role {
             id: id,
             name: name,
@@ -839,7 +839,7 @@ impl std::str::FromStr for Role {
         #[derive(Default)]
         // An intermediate representation of the struct to use for parsing.
         struct IntermediateRep {
-            pub id: Vec<i32>,
+            pub id: Vec<i64>,
             pub name: Vec<String>,
             pub emoji: Vec<String>,
         }
@@ -858,7 +858,7 @@ impl std::str::FromStr for Role {
 
             if let Some(key) = key_result {
                 match key {
-                    "id" => intermediate_rep.id.push(<i32 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
+                    "id" => intermediate_rep.id.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     "name" => intermediate_rep.name.push(<String as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     "emoji" => intermediate_rep.emoji.push(<String as std::str::FromStr>::from_str(val).map_err(|x| format!("{}", x))?),
                     _ => return std::result::Result::Err("Unexpected key while parsing Role".to_string())

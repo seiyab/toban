@@ -544,7 +544,7 @@ impl<S, C> Api<C> for Client<S, C> where
 
     async fn get_members_member_id(
         &self,
-        param_member_id: i32,
+        param_member_id: i64,
         context: &C) -> Result<GetMembersMemberIdResponse, ApiError>
     {
         let mut client_service = self.client_service.clone();
@@ -696,7 +696,7 @@ impl<S, C> Api<C> for Client<S, C> where
 
     async fn get_roles_role_id(
         &self,
-        param_role_id: i32,
+        param_role_id: i64,
         context: &C) -> Result<GetRolesRoleIdResponse, ApiError>
     {
         let mut client_service = self.client_service.clone();

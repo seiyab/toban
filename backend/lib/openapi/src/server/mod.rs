@@ -300,7 +300,7 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                     );
 
                 let param_member_id = match percent_encoding::percent_decode(path_params["member_id"].as_bytes()).decode_utf8() {
-                    Ok(param_member_id) => match param_member_id.parse::<i32>() {
+                    Ok(param_member_id) => match param_member_id.parse::<i64>() {
                         Ok(param_member_id) => param_member_id,
                         Err(e) => return Ok(Response::builder()
                                         .status(StatusCode::BAD_REQUEST)
@@ -396,7 +396,7 @@ impl<T, C> hyper::service::Service<(Request<Body>, C)> for Service<T, C> where
                     );
 
                 let param_role_id = match percent_encoding::percent_decode(path_params["role_id"].as_bytes()).decode_utf8() {
-                    Ok(param_role_id) => match param_role_id.parse::<i32>() {
+                    Ok(param_role_id) => match param_role_id.parse::<i64>() {
                         Ok(param_role_id) => param_role_id,
                         Err(e) => return Ok(Response::builder()
                                         .status(StatusCode::BAD_REQUEST)

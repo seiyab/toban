@@ -2,4 +2,4 @@
 port = 8080
 
 [global.databases]
-app = { url = "mysql://root:Jeannine921{telecommunications@127.0.0.1:3306/app" }
+app = { url = "postgres://app:Jeannine921{telecommunications@localhost/app" }

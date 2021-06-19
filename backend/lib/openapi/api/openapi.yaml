@@ -44,7 +44,7 @@ paths:
         name: member_id
         required: true
         schema:
-          format: int32
+          format: int64
           type: integer
         style: simple
       responses:
@@ -92,7 +92,7 @@ paths:
         name: role_id
         required: true
         schema:
-          format: int32
+          format: int64
           type: integer
         style: simple
       responses:
@@ -157,7 +157,7 @@ components:
         id: 0
       properties:
         id:
-          format: int32
+          format: int64
           type: integer
       required:
       - id
@@ -170,7 +170,7 @@ components:
       properties:
         id:
           description: member id
-          format: int32
+          format: int64
           type: integer
         name:
           description: name of the member
@@ -199,7 +199,7 @@ components:
       properties:
         id:
           description: role id
-          format: int32
+          format: int64
           type: integer
         name:
           description: name of the role
@@ -237,11 +237,11 @@ components:
       properties:
         id:
           description: assignment id
-          format: int32
+          format: int64
           type: integer
         role_id:
           description: role id
-          format: int32
+          format: int64
           type: integer
         start_at:
           description: date when assignment start
@@ -253,7 +253,7 @@ components:
           type: string
         member_id:
           description: member id
-          format: int32
+          format: int64
           type: integer
       required:
       - end_at

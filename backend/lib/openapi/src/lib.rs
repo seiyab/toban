@@ -88,7 +88,7 @@ pub trait Api<C: Send + Sync> {
     /// get a member
     async fn get_members_member_id(
         &self,
-        member_id: i32,
+        member_id: i64,
         context: &C) -> Result<GetMembersMemberIdResponse, ApiError>;
 
     /// get roles
@@ -99,7 +99,7 @@ pub trait Api<C: Send + Sync> {
     /// get a role
     async fn get_roles_role_id(
         &self,
-        role_id: i32,
+        role_id: i64,
         context: &C) -> Result<GetRolesRoleIdResponse, ApiError>;
 
     /// post a new member
@@ -139,7 +139,7 @@ pub trait ApiNoContext<C: Send + Sync> {
     /// get a member
     async fn get_members_member_id(
         &self,
-        member_id: i32,
+        member_id: i64,
         ) -> Result<GetMembersMemberIdResponse, ApiError>;
 
     /// get roles
@@ -150,7 +150,7 @@ pub trait ApiNoContext<C: Send + Sync> {
     /// get a role
     async fn get_roles_role_id(
         &self,
-        role_id: i32,
+        role_id: i64,
         ) -> Result<GetRolesRoleIdResponse, ApiError>;
 
     /// post a new member
@@ -213,7 +213,7 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
     /// get a member
     async fn get_members_member_id(
         &self,
-        member_id: i32,
+        member_id: i64,
         ) -> Result<GetMembersMemberIdResponse, ApiError>
     {
         let context = self.context().clone();
@@ -232,7 +232,7 @@ impl<T: Api<C> + Send + Sync, C: Clone + Send + Sync> ApiNoContext<C> for Contex
     /// get a role
     async fn get_roles_role_id(
         &self,
-        role_id: i32,
+        role_id: i64,
         ) -> Result<GetRolesRoleIdResponse, ApiError>
     {
         let context = self.context().clone();

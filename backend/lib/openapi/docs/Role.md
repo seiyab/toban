@@ -3,7 +3,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **i32** | role id | 
+**id** | **i64** | role id | 
 **name** | **String** | name of the role | 
 **emoji** | **String** | emoji icon key of the role (e.g. '+1', 'tada') | [optional] [default to None]
 

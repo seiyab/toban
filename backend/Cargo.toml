@@ -16,12 +16,12 @@ features = ["derive"]
 
 [dependencies.diesel]
 version = "1.4.6"
-features = ["mysql", "chrono"]
+features = ["postgres", "chrono"]
 
 [dependencies.rocket_contrib]
 version = "0.4.7"
 default-features = false
-features = ["diesel_mysql_pool", "json", "serve"]
+features = ["diesel_postgres_pool", "json", "serve"]
 
 [dependencies.openapi_client]
 path = "./lib/openapi"

@@ -1,23 +1,23 @@
 table! {
     assignments (id) {
-        id -> Integer,
-        role_id -> Integer,
+        id -> Int8,
+        role_id -> Int8,
         start_at -> Date,
         end_at -> Date,
-        member_id -> Integer,
+        member_id -> Int8,
     }
 }
 
 table! {
     members (id) {
-        id -> Integer,
+        id -> Int8,
         name -> Varchar,
     }
 }
 
 table! {
     roles (id) {
-        id -> Integer,
+        id -> Int8,
         name -> Varchar,
         emoji -> Nullable<Varchar>,
     }

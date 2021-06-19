@@ -5,10 +5,8 @@ use diesel::prelude::*;
 
 use openapi_client::models as spec;
 
-use crate::schema::members::dsl::*;
-use crate::schema::members::columns::id;
+use crate::domain::member;
 use crate::db_connection;
-use crate::models;
 
 
 #[derive(Responder)]
@@ -17,19 +15,22 @@ pub enum GetMemberResponse {
   R200(Json<spec::Member>),
   #[response(status = 404, content_type = "json")]
   R404(Json<spec::Error>),
+  #[response(status = 500, content_type = "json")]
+  R500(Json<spec::Error>),
 }
 
 #[get("/members/<member_id>")]
-pub fn get_member(conn: db_connection::AppDbConn, member_id: i32) -> GetMemberResponse {
-  let member = members
-    .filter(id.eq(member_id))
-    .first::<models::Member>(&*conn);
-
-  match member {
-    Ok(m) => GetMemberResponse::R200(Json(m.to_resp())),
-    Err(_) => GetMemberResponse::R404(Json(spec::Error{
+pub fn get_member(conn: db_connection::AppDbConn, member_id: i64) -> GetMemberResponse {
+  let repo = member::MemberRepository::new(&conn);
+  match repo.find(member_id) {
+    Ok(Some(m)) => GetMemberResponse::R200(Json(m.to_resp())),
+    Ok(None) => GetMemberResponse::R404(Json(spec::Error{
       code: None,
       message: Some("not found".to_string()),
+    })),
+    Err(_) => GetMemberResponse::R500(Json(spec::Error{
+      code: None,
+      message: Some("internal server error".to_string()),
     })),
   }
 }
@@ -44,8 +45,9 @@ pub enum GetMembersResponse {
 
 #[get("/members")]
 pub fn get_members(conn: db_connection::AppDbConn) -> GetMembersResponse {
-  match members.load::<models::Member>(&*conn) {
-    Ok(rows) => GetMembersResponse::R200(Json(rows.iter().map(|row| row.to_resp()).collect())),
+  let repo = member::MemberRepository::new(&conn);
+  match repo.find_all() {
+    Ok(members) => GetMembersResponse::R200(Json(members.iter().map(|row| row.to_resp()).collect())),
     Err(_) => GetMembersResponse::R500(Json(spec::Error{
       code: None,
       message: Some("internal server error".to_string())
@@ -63,26 +65,25 @@ pub enum PostMembersResponse {
 
 #[post("/members", data="<body>")]
 pub fn post_members(conn: db_connection::AppDbConn, body: Json<spec::NewMember>) -> PostMembersResponse {
-  let new_member = models::NewMember {
-    name: &body.name
-  };
+  let repo = member::MemberRepository::new(&conn);
   conn.transaction(|| {
-    diesel::insert_into(members)
-      .values(new_member)
-      .execute(&*conn)
-      .and_then(|_| {
-        diesel::select(db_connection::last_insert_id)
-          .first::<i32>(&*conn)
-      })
+    let id = repo.new_id().or(Err(diesel::result::Error::RollbackTransaction))?;
+    let new_member = member::Member {
+      id: id,
+      name: body.name.clone(),
+    };
+    repo.save(&new_member)
+      .and(Ok(id))
+      .or(Err(diesel::result::Error::RollbackTransaction))
   })
-    .map(|last_id: i32| PostMembersResponse::R201(Json(spec::New{id: last_id})))
+    .map(|id: i64| PostMembersResponse::R201(Json(spec::New{id})))
     .unwrap_or(PostMembersResponse::R500(Json(spec::Error{
         code: None,
         message: Some("failed to create a member".to_string()),
     })))
 }
 
-impl models::Member {
+impl member::Member {
   fn to_resp(&self) -> spec::Member {
     spec::Member{
       id: self.id,
