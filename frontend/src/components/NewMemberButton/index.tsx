@@ -28,6 +28,7 @@ export const NewMemberButton: React.VoidFunctionComponent = () => {
       name: textInputControl.value,
     });
     modalControl.close();
+    textInputControl.setValue("");
   };
   return (
     <>

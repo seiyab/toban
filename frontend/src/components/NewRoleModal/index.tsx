@@ -45,6 +45,7 @@ export const NewRoleModal: React.VoidFunctionComponent<Props> = ({
       emoji: emojiSelectorControl.value,
     });
     close();
+    textInputControl.setValue("");
   };
   return (
     <Modal

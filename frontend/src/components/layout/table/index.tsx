@@ -18,11 +18,11 @@ const useStyles = createUseStyles(styles);
 
 type DivProps = React.HTMLAttributes<HTMLDivElement>;
 
-function create(className: keyof typeof styles): React.FC<DivProps> {
+function create(name: keyof typeof styles): React.FC<DivProps> {
   // eslint-disable-next-line react/display-name
-  return ({ children, ...props }) => {
+  return ({ children, className, ...props }) => {
     const classes = useStyles();
-    const cn = classNames(classes[className], props["className"]);
+    const cn = classNames(classes[name], className);
     return (
       <div className={cn} {...props}>
         {children}
