@@ -32,6 +32,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
+    "@seiyab/do-expr": "^1.0.0",
     "classnames": "^2.3.1",
     "proposal-temporal": "^0.8.0",
     "react": "^17.0.2",
