@@ -41,15 +41,10 @@ pub enum GetRolesResponse {
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-#[must_use]
 pub enum GetRolesRoleIdResponse {
     /// Successful response
     SuccessfulResponse
     (models::Role)
-    ,
-    /// Not Found
-    NotFound
-    (models::Error)
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]

@@ -751,18 +751,6 @@ impl<S, C> Api<C> for Client<S, C> where
                     (body)
                 )
             }
-            404 => {
-                let body = response.into_body();
-                let body = body
-                        .to_raw()
-                        .map_err(|e| ApiError(format!("Failed to read response: {}", e))).await?;
-                let body = str::from_utf8(&body)
-                    .map_err(|e| ApiError(format!("Response was not valid UTF8: {}", e)))?;
-                let body = serde_json::from_str::<models::Error>(body)?;
-                Ok(GetRolesRoleIdResponse::NotFound
-                    (body)
-                )
-            }
             code => {
                 let headers = response.headers().clone();
                 let body = response.into_body()

@@ -1,0 +1,70 @@
+components:
+  pathItems:
+    /members:
+      get:
+        operationId: get_members
+        summary: get members
+        responses:
+          '200':
+            description: |
+              200 response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Member'
+      post:
+        operationId: post_members
+        summary: post a new member
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewMember'
+        responses:
+          '201':
+            description: Successful
+            content:
+              application/json:
+                schema:
+                  $ref: './general.yaml#/components/schemas/New'
+    /members/{member_id}:
+      get:
+        operationId: get_members_member_id
+        summary: get a member
+        parameters:
+          - name: member_id
+            in: path
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: 200 response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Member'
+  schemas:
+    Member:
+      description: member
+      type: object
+      properties:
+        id:
+          description: member id
+          type: integer
+          format: int64
+        name:
+          description: name of the member
+          type: string
+      required: [id, name]
+    NewMember:
+      description: new member
+      type: object
+      properties:
+        name:
+          description: name of the member
+          type: string
+      required: [name]

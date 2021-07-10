@@ -1,0 +1,54 @@
+components:
+  pathItems:
+    /assignments:
+      get:
+        operationId: get_assignments
+        summary: get assignments
+        parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Assignment'
+  schemas:
+    Assignment:
+      description: assignment of role
+      type: object
+      properties:
+        id:
+          description: assignment id
+          type: integer
+          format: int64
+        role_id:
+          description: role id
+          type: integer
+          format: int64
+        start_at:
+          description: date when assignment start
+          type: string
+          format: date
+        end_at:
+          description: date when assignment end (inclusive)
+          type: string
+          format: date
+        member_id:
+          description: member id
+          type: integer
+          format: int64
+      required: [id, role_id, start_at, end_at, member_id]

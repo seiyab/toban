@@ -1,0 +1,76 @@
+components:
+  pathItems:
+    /roles:
+      get:
+        operationId: get_roles
+        summary: get roles
+        responses:
+          '200':
+            description:
+              Successful response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Role'
+      post:
+        operationId: post_roles
+        summary: post a new member
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewRole'
+        responses:
+          '201':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: './general.yaml#/components/schemas/New'
+    /roles/{role_id}:
+      get:
+        operationId: get_roles_role_id
+        summary: get a role
+        parameters:
+          - name: role_id
+            in: path
+            required: true
+            schema:
+              type: integer
+              format: int64
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Role'
+  schemas:
+    Role:
+      description: role
+      type: object
+      properties:
+        id:
+          description: role id
+          type: integer
+          format: int64
+        name:
+          description: name of the role
+          type: string
+        emoji:
+          description: emoji icon key of the role (e.g. '+1', 'tada')
+          type: string
+      required: [id, name]
+    NewRole:
+      description: role
+      type: object
+      properties:
+        name:
+          description: name of the role
+          type: string
+        emoji:
+          description: emoji icon key of the role (e.g. '+1', 'tada')
+          type: string
+      required: [name]
