@@ -1,0 +1,17 @@
+[
+  {
+    "id": 0,
+    "name": "role-0",
+    "emoji": "+1"
+  },
+  {
+    "id": 1,
+    "name": "role-1",
+    "emoji": "100"
+  },
+  {
+    "id": 2,
+    "name": "role-2",
+    "emoji": "1234"
+  }
+]

@@ -37,6 +37,7 @@ const create = (
           <img
             className={classNames(classes[styleKey], className)}
             src={d[props.emoji]}
+            alt={props.emoji}
             {...props}
           />
         )}

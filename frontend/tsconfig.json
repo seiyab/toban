@@ -6,8 +6,7 @@
     "src/**/*.tsx"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.test.ts"
+    "node_modules"
   ],
   "compilerOptions": {
     "lib": [
