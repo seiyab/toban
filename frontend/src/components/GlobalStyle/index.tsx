@@ -1,8 +1,11 @@
 import * as React from "react";
 import { createUseStyles } from "react-jss";
 
+import { pallette } from "@/cosmetic";
+
 const useStyles = createUseStyles({
   global: {
+    backgroundColor: pallette.background,
     fontFamily: "'Noto Sans JP', sans-serif",
     "& *": {
       margin: 0,

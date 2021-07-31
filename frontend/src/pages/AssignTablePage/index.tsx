@@ -3,7 +3,6 @@ import { createUseStyles } from "react-jss";
 
 import { AssignTable } from "@/components/AssignTable";
 import { RoleList } from "@/components/RoleList";
-import { NewMemberButton } from "@/components/NewMemberButton";
 
 const useStyles = createUseStyles({
   assignTablePage: {
@@ -25,7 +24,6 @@ export const AssignTablePage: React.VoidFunctionComponent = () => {
       <div className={classes.content}>
         <AssignTable />
         <div>
-          <NewMemberButton />
           <RoleList className={classes.roleList} />
         </div>
       </div>
