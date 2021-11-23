@@ -2,18 +2,19 @@ import { Temporal } from "proposal-temporal";
 import classNames from "classnames";
 import * as React from "react";
 import { createUseStyles } from "react-jss";
+import * as UQR from "@seiyab/fp-ts-react-query/lib/UseQueryResult";
+import { pipe, flow } from "fp-ts/lib/function";
+import * as A from "fp-ts/lib/Array";
 
 import { Option } from "@/general/option";
-import { pipe } from "@/general/pipe";
 import { DivTable, DivRow, DivCell } from "@/components/layout/table";
 import { Emoji14 } from "@/components/Emoji";
 import { range } from "@/general/range";
 import { useAssignments, useMembers, useRoles } from "@/fetch/hooks";
 import { dayOfWeekString } from "@/domain/dateTime";
 import { EmojiKey } from "@/fetch/extern/github";
-import { AsyncResult } from "@/general/reactQuery";
 import { Dict } from "@/general/dict";
-import { Assignment, AssignmentIndex } from "@/domain/assignment";
+import { AssignmentIndex } from "@/domain/assignment";
 import { pallette } from "@/cosmetic";
 import { NewMemberButton } from "../NewMemberButton";
 
@@ -53,11 +54,12 @@ export const AssignTable: React.FC = () => {
   const membersResp = useMembers();
   const rolesResp = useRoles();
   const assignmentsResp = useAssignments(days[0], days[days.length - 1]);
-  const joined = AsyncResult.join({
-    members: membersResp,
-    roles: rolesResp,
-    assignments: assignmentsResp,
-  });
+  const joined = pipe(
+    UQR.Do,
+    UQR.bind("members", () => membersResp),
+    UQR.bind("roles", () => rolesResp),
+    UQR.bind("assignments", () => assignmentsResp)
+  );
   if (!joined.isSuccess) {
     return null;
   }
@@ -92,32 +94,28 @@ export const AssignTable: React.FC = () => {
             {members.map((member) => (
               <DivCell key={member.id} className={classes.cell}>
                 <div className={classes.assignments}>
-                  {pipe(assignmentIndex.get(member.id, day))
-                    .and((assignments: Assignment[]) =>
-                      assignments.map((a) =>
-                        pipe(a)
-                          .and((a) => rolesDict.get(a.roleId))
-                          .and(
-                            Option.map((role) => {
-                              const emoji = role.emoji;
-                              console.log(role);
-                              if (emoji)
-                                return (
-                                  <Emoji14
-                                    key={a.id}
-                                    emoji={emoji as EmojiKey}
-                                  />
-                                );
-                              return (
-                                <span key={a.id}>{role.name[0] ?? ""}</span>
-                              );
-                            })
-                          )
-                          .and(Option.unwrap)
-                          .end()
+                  {pipe(
+                    assignmentIndex.get(member.id, day),
+                    A.map(
+                      flow(
+                        (a) => rolesDict.get(a.roleId),
+                        Option.map((role) => {
+                          const emoji = role.emoji;
+                          if (emoji)
+                            return (
+                              <Emoji14
+                                key={role.id}
+                                emoji={emoji as EmojiKey}
+                              />
+                            );
+                          return (
+                            <span key={role.id}>{role.name[0] ?? ""}</span>
+                          );
+                        }),
+                        Option.unwrap
                       )
                     )
-                    .end()}
+                  )}
                 </div>
               </DivCell>
             ))}

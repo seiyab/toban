@@ -1,7 +1,9 @@
 import * as React from "react";
-import { useTextInput } from "@/general/dom";
+import { useTextInput } from "@/components/basic/TextInput/hooks";
 import { createUseStyles } from "react-jss";
 import { useNewMember } from "@/fetch/hooks";
+import { pallette } from "@/cosmetic";
+import { Button } from "@/components/basic/Button";
 
 type Props = {
   onCancel: () => void;
@@ -12,12 +14,34 @@ const useStyles = createUseStyles({
   whole: {
     alignItems: "center",
     borderRadius: "15px",
+    borderColor: pallette.mainLight,
+    borderWidth: "2px",
+    borderStyle: "solid",
     padding: "50px",
-    backgroundColor: "#fff",
+    backgroundColor: pallette.background,
+    color: pallette.character,
+  },
+  header: {
+    width: "100%",
+    textAlign: "center",
+  },
+  form: {
+    marginTop: "10px",
   },
   buttons: {
+    marginTop: "10px",
     display: "flex",
     justifyContent: "space-between",
+  },
+  submit: {
+    backgroundColor: pallette.mainDark,
+    color: pallette.background,
+  },
+  cancel: {
+    backgroundColor: "transparent",
+    borderColor: pallette.mainDark,
+    borderWidth: "2px",
+    borderStyle: "solid",
   },
 });
 
@@ -39,17 +63,24 @@ export const NewMemberModalContent: React.VoidFunctionComponent<Props> = ({
 
   return (
     <div className={classes.whole}>
-      <label>
-        Name:
-        <input
-          type="text"
-          value={textInputControl.value}
-          onChange={textInputControl.handleChange}
-        />
-      </label>
+      <div className={classes.header}>Add a member</div>
+      <form className={classes.form}>
+        <label>
+          Name:
+          <input
+            type="text"
+            value={textInputControl.value}
+            onChange={textInputControl.handleChange}
+          />
+        </label>
+      </form>
       <div className={classes.buttons}>
-        <button onClick={submit}>Submit</button>
-        <button onClick={onCancel}>Cancel</button>
+        <Button onClick={submit} className={classes.submit}>
+          Submit
+        </Button>
+        <Button onClick={onCancel} className={classes.cancel}>
+          Cancel
+        </Button>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
 
 import { RoleList as PureRoleList } from ".";
 import { withQueryClient } from "@/fetch/provider/withQueryClient";

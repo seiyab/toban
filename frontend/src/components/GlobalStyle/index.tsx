@@ -5,6 +5,7 @@ import { pallette } from "@/cosmetic";
 
 const useStyles = createUseStyles({
   global: {
+    color: pallette.character,
     backgroundColor: pallette.background,
     fontFamily: "'Noto Sans JP', sans-serif",
     "& *": {

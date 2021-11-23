@@ -28,7 +28,9 @@ it("msw + openapi internal", async () => {
 });
 
 it("msw + react query external", async () => {
-  const wrapper = withQueryClient()(({ children }) => <>{children}</>);
+  const wrapper = withQueryClient<Record<string, unknown>>()(({ children }) => (
+    <>{children}</>
+  ));
   const { result } = renderHook(() => useGitHubEmojis(), { wrapper });
   await waitFor(() => {
     expect(result.current.isSuccess).toBe(true);

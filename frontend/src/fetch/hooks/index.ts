@@ -6,6 +6,7 @@ import {
   UseQueryResult,
 } from "react-query";
 import { Temporal } from "proposal-temporal";
+import * as UQR from "@seiyab/fp-ts-react-query/lib/UseQueryResult";
 
 import {
   Assignment as AssignmentResponse,
@@ -16,7 +17,6 @@ import {
 import { Assignment } from "@/domain/assignment";
 import { dateToPlainDate, plainDateToDate } from "../transfer";
 import { client } from "../client";
-import { AsyncResult } from "@/general/reactQuery";
 
 export function useMember(memberID: number): UseQueryResult<Member> {
   const keys = ["useMember", memberID];
@@ -72,7 +72,7 @@ export function useNewRole(): UseMutationResult<
 export function useAssignments(
   from: Temporal.PlainDate,
   to: Temporal.PlainDate
-): AsyncResult<Assignment[]> {
+): UseQueryResult<Assignment[]> {
   const keys = ["useAssignment", from.toString(), to.toString()];
   const response = useQuery(keys, () =>
     client.getAssignments({
@@ -80,7 +80,7 @@ export function useAssignments(
       to: plainDateToDate(to),
     })
   );
-  return AsyncResult.map((rs: AssignmentResponse[]) =>
+  return UQR.map((rs: AssignmentResponse[]) =>
     rs.map((r) => ({
       ...r,
       startAt: dateToPlainDate(r.startAt),

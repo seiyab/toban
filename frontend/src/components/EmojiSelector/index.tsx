@@ -4,8 +4,8 @@ import { createUseStyles } from "react-jss";
 
 import { OutsideListener } from "@/components/OutsideListener";
 import { EmojiKey, useGitHubEmojis } from "@/fetch/extern/github";
-import { Emoji20 } from "../Emoji";
-import { useTextInput } from "@/general/dom";
+import { Emoji20 } from "@/components/Emoji";
+import { useTextInput } from "@/components/basic/TextInput/hooks";
 
 type Props = {
   className?: string;

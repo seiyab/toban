@@ -40,7 +40,9 @@
   },
   "dependencies": {
     "@seiyab/do-expr": "^1.0.0",
+    "@seiyab/fp-ts-react-query": "^0.0.2",
     "classnames": "^2.3.1",
+    "fp-ts": "^2.11.5",
     "proposal-temporal": "^0.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

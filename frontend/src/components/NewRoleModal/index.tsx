@@ -3,8 +3,8 @@ import { createUseStyles } from "react-jss";
 
 import { Modal } from "@/components/layout/Modal";
 import { EmojiSelector, useEmojiSelector } from "@/components/EmojiSelector";
+import { useTextInput } from "@/components/basic/TextInput/hooks";
 import { useNewRole } from "@/fetch/hooks";
-import { useTextInput } from "@/general/dom";
 
 type Props = {
   active: boolean;
